@@ -2,8 +2,8 @@
 //
 // SPDX-License-Identifier: GPL-3.0-or-later
 
-use clap::{crate_version, crate_authors, App, Arg};
-use dict::{ Dict, DictIface };
+use clap::{crate_authors, crate_version, App, Arg};
+use dict::{Dict, DictIface};
 use std::env;
 
 mod key_value;
@@ -97,7 +97,8 @@ fn main() {
             println!("OUTPUT: {}", out_file);
         }
 
-        vars.iter().for_each(|o| println!("VARIABLE: {}={}", o.key, o.val));
+        vars.iter()
+            .for_each(|o| println!("VARIABLE: {}={}", o.key, o.val));
         println!();
     }
 

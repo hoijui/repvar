@@ -2,20 +2,23 @@
 //
 // SPDX-License-Identifier: GPL-3.0-or-later
 
+use dict::{Dict, DictIface};
 use std::io::{self, BufRead, Write};
-use dict::{ Dict, DictIface };
 
-fn replacement(vars: &Dict::<String>, key: &str, fail: bool) -> io::Result<String> {
+fn replacement(vars: &Dict<String>, key: &str, fail: bool) -> io::Result<String> {
     return match vars.get(key) {
         Some(val) => Ok(val.to_string()),
         None => {
             if fail {
-                Err(io::Error::new(io::ErrorKind::NotFound, format!("Undefined variable '{}'", key)))
+                Err(io::Error::new(
+                    io::ErrorKind::NotFound,
+                    format!("Undefined variable '{}'", key),
+                ))
             } else {
                 Ok(format!("${{{}}}", key))
             }
         }
-    }
+    };
 }
 
 enum ReplState {
@@ -25,7 +28,7 @@ enum ReplState {
     Key,
 }
 
-fn replace_in_string(vars: &Dict::<String>, line: &str, fail: bool) -> io::Result<String> {
+fn replace_in_string(vars: &Dict<String>, line: &str, fail: bool) -> io::Result<String> {
     let mut state = ReplState::Text;
     let mut key = String::new();
     let mut buff_text = String::new();
@@ -42,7 +45,7 @@ fn replace_in_string(vars: &Dict::<String>, line: &str, fail: bool) -> io::Resul
                 } else {
                     buff_text.push(chr);
                 }
-            },
+            }
             ReplState::Dollar1 => {
                 if chr == '$' {
                     state = ReplState::Dollar2;
@@ -55,7 +58,7 @@ fn replace_in_string(vars: &Dict::<String>, line: &str, fail: bool) -> io::Resul
                     buff_out.push_str(&buff_special);
                     buff_special.clear();
                 }
-            },
+            }
             ReplState::Dollar2 => {
                 buff_special.push(chr);
                 if chr != '$' {
@@ -63,13 +66,13 @@ fn replace_in_string(vars: &Dict::<String>, line: &str, fail: bool) -> io::Resul
                         // Remove one of the '$'s,
                         // so "$$${key_" -> "$${key_",
                         // for example
-                        buff_special.remove(0); 
+                        buff_special.remove(0);
                     }
                     state = ReplState::Text;
                     buff_out.push_str(&buff_special);
                     buff_special.clear();
                 }
-            },
+            }
             ReplState::Key => {
                 if chr == '}' {
                     let val = replacement(vars, &key, fail)?;
@@ -93,7 +96,12 @@ fn replace_in_string(vars: &Dict::<String>, line: &str, fail: bool) -> io::Resul
     Ok(buff_out)
 }
 
-pub fn replace_in_stream(vars: &Dict::<String>, reader: &mut Box<dyn BufRead>, writer: &mut Box<dyn Write>, fail: bool) -> io::Result<()> {
+pub fn replace_in_stream(
+    vars: &Dict<String>,
+    reader: &mut Box<dyn BufRead>,
+    writer: &mut Box<dyn Write>,
+    fail: bool,
+) -> io::Result<()> {
     let mut input;
     // let interval = Duration::from_millis(1);
 
@@ -130,7 +138,6 @@ mod tests {
 
     #[test]
     fn test_replace_in_string_no_vars() {
-
         let vars = Dict::<String>::new();
         let input = "a ${key_a} $${key_a} b ${key_b} c";
         let expected = "a ${key_a} ${key_a} b ${key_b} c";
@@ -140,7 +147,6 @@ mod tests {
 
     #[test]
     fn test_replace_in_string_one_var() {
-
         let mut vars = Dict::<String>::new();
         vars.add("key_a".to_string(), "1".to_string());
         let input = "a ${key_a} $${key_a} b ${key_b} c";
@@ -151,7 +157,6 @@ mod tests {
 
     #[test]
     fn test_replace_in_string_two_vars() {
-
         let mut vars = Dict::<String>::new();
         vars.add("key_a".to_string(), "1".to_string());
         vars.add("key_b".to_string(), "2".to_string());
@@ -163,7 +168,6 @@ mod tests {
 
     #[test]
     fn test_replace_in_string_case_sensitive() {
-
         let mut vars = Dict::<String>::new();
         vars.add("Key_A".to_string(), "1".to_string());
         vars.add("key_b".to_string(), "2".to_string());
@@ -175,7 +179,6 @@ mod tests {
 
     #[test]
     fn test_replace_in_string_missing_closing_bracket() {
-
         let mut vars = Dict::<String>::new();
         vars.add("key_a".to_string(), "1".to_string());
         let input = "a ${key_a";
@@ -186,7 +189,6 @@ mod tests {
 
     #[test]
     fn test_replace_in_string_missing_closing_bracket_and_key() {
-
         let mut vars = Dict::<String>::new();
         vars.add("key_a".to_string(), "1".to_string());
         let input = "a ${";
@@ -197,7 +199,6 @@ mod tests {
 
     #[test]
     fn test_replace_in_string_missing_closing_bracket_quoted() {
-
         let mut vars = Dict::<String>::new();
         vars.add("key_a".to_string(), "1".to_string());
         let input = "a $${key_a";
@@ -207,7 +208,6 @@ mod tests {
     }
     #[test]
     fn test_replace_in_string_missing_closing_bracket_and_key_quoted() {
-
         let vars = Dict::<String>::new();
         let input = "a $${";
         let expected = "a ${"; // NOTE Do we really want it this way, or should there still be two $$? this way is easy to implement, the other way seems more correct
