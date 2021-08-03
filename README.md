@@ -24,6 +24,17 @@ like `-Dkey=value`.
 
 ## Usage
 
+A Simplisitc example:
+
+```bash
+$ export VAR_A="replacement"   # setting an env.-variable
+$ echo 'Text ${VAR}.' \        # input text
+    | repvar --env             # filtering with `repvar`
+Text replacement.              # output
+```
+
+A slightly more elaborate example:
+
 ```bash
 $ export first="the environment"
 $ echo 'Variables from ${first}, ${second}, ${not_supplied} and $${quoted}.' \
