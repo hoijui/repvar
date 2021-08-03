@@ -6,6 +6,15 @@
 name = "repvar"
 version = "0.1.0"
 authors = ["Robin Vobruba <hoijui.quaero@gmail.com>"]
+description = """
+    A tiny CLI tool that replaces variables of the style `${KEY}`
+    in text with their respective value.
+    It can also be used as a rust library
+    """
+license-file = "LICENSE.md"
+repository = "https://github.com/hoijui/repvar"
+keywords = ["cli", "ci", "variable-replacement"]
+categories = ["command-line-utilities"]
 edition = "2018"
 
 [dependencies]
