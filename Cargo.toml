@@ -11,6 +11,7 @@ description = """
     in text with their respective value.
     It can also be used as a rust library
     """
+license = "GPL-3.0-or-later"
 license-file = "LICENSE.md"
 repository = "https://github.com/hoijui/repvar"
 keywords = ["cli", "ci", "variable-replacement"]
