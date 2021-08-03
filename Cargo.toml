@@ -4,7 +4,7 @@
 
 [package]
 name = "repvar"
-version = "0.1.0"
+version = "0.1.1-beta"
 authors = ["Robin Vobruba <hoijui.quaero@gmail.com>"]
 description = """
     A tiny CLI tool that replaces variables of the style `${KEY}`
