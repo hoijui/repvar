@@ -27,7 +27,7 @@ like `-Dkey=value`.
 ```bash
 $ export first="the environment"
 $ echo 'Variables from ${first}, ${second}, ${not_supplied} and $${quoted}.' \
-    | repvars -D"second=the CLI"
+    | repvars --env -D"second=the CLI"
 Variables from the environment, the CLI, ${not_supplied} and ${quoted}.
 ```
 
