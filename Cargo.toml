@@ -15,7 +15,7 @@ license = "GPL-3.0-or-later"
 license-file = "LICENSE.md"
 repository = "https://github.com/hoijui/repvar"
 keywords = ["cli", "ci", "variable-replacement"]
-categories = ["command-line-utilities"]
+categories = ["command-line-utilities", "text-processing"]
 edition = "2018"
 
 [dependencies]
