@@ -30,10 +30,10 @@ enum ReplState {
 
 fn replace_in_string(vars: &Dict<String>, line: &str, fail: bool) -> io::Result<String> {
     let mut state = ReplState::Text;
-    let mut key = String::new();
-    let mut buff_text = String::new();
-    let mut buff_special = String::new();
-    let mut buff_out = String::new();
+    let mut key = String::with_capacity(64);
+    let mut buff_text = String::with_capacity(line.len());
+    let mut buff_special = String::with_capacity(5);
+    let mut buff_out = String::with_capacity(line.len() * 3 / 2);
     for chr in line.chars() {
         match state {
             ReplState::Text => {
