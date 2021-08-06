@@ -1,0 +1,9 @@
+#!/bin/sh
+
+# SPDX-FileCopyrightText: 2021 Robin Vobruba <hoijui.quaero@gmail.com>
+#
+# SPDX-License-Identifier: Unlicense
+
+sudo apt-get update
+sudo apt-get install -y --no-install-recommends \
+  xz-utils liblz4-tool musl-tools
