@@ -49,7 +49,7 @@ impl FromStr for KeyValuePair {
     fn from_str(blob: &str) -> std::result::Result<Self, Self::Err> {
         let valid: Regex = Regex::new(r"^[^=\\0]+=[^=\\0]+$").unwrap();
         if valid.is_match(blob) {
-            let mut parts = blob.split(r"=");
+            let mut parts = blob.split('=');
             Ok(KeyValuePair {
                 key: parts.next().unwrap().to_string(),
                 value: parts.next().unwrap().to_string(),
