@@ -3,8 +3,8 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 
 use dict::{Dict, DictIface};
-use std::io::{self, BufRead, Write};
 use std::borrow::Cow;
+use std::io::{self, BufRead, Write};
 
 fn replacement(vars: &Dict<String>, key: &str, fail: bool) -> io::Result<(bool, String)> {
     return match vars.get(key) {
@@ -29,7 +29,11 @@ enum ReplState {
     Key,
 }
 
-pub fn replace_in_string<'t>(vars: &Dict<String>, line: &'t str, fail: bool) -> io::Result<Cow<'t, str>> {
+pub fn replace_in_string<'t>(
+    vars: &Dict<String>,
+    line: &'t str,
+    fail: bool,
+) -> io::Result<Cow<'t, str>> {
     let mut state = ReplState::Text;
     let mut key = String::with_capacity(64);
     let mut buff_text = String::with_capacity(line.len());
