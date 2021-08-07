@@ -54,6 +54,15 @@ fn main() {
                 .required(false)
         )
         .arg(
+            Arg::new("verbose")
+                .about("more verbose output (useful for debugging)")
+                .takes_value(false)
+                .short('v')
+                .long("verbose")
+                .multiple_occurrences(false)
+                .required(false)
+        )
+        .arg(
             Arg::new("fail-on-missing-values")
                 .about("fail if no value is available for a variable key found in the input text")
                 .takes_value(false)
