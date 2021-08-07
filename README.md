@@ -12,6 +12,18 @@ SPDX-License-Identifier: CC0-1.0
 [![REUSE status](
     https://api.reuse.software/badge/github.com/hoijui/repvar)](
     https://api.reuse.software/info/github.com/hoijui/repvar)
+[![crates.io](
+    https://img.shields.io/crates/v/repvar.svg)](
+    https://crates.io/crates/repvar)
+[![Docs](
+    https://docs.rs/repvar/badge.svg)](
+    https://docs.rs/repvar)
+[![dependency status](
+    https://deps.rs/repo/github/hoijui/repvar/status.svg)](
+    https://deps.rs/repo/github/hoijui/repvar)
+[![Build status](
+    https://github.com/hoijui/repvar/workflows/build/badge.svg)](
+    https://github.com/hoijui/repvar/actions)
 
 A tiny CLI tool that replaces variables of the style `${KEY}`
 in text with their respective value.
