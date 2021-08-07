@@ -4,10 +4,11 @@
 
 use dict::{Dict, DictIface};
 use std::io::{self, BufRead, Write};
+use std::borrow::Cow;
 
-fn replacement(vars: &Dict<String>, key: &str, fail: bool) -> io::Result<String> {
+fn replacement(vars: &Dict<String>, key: &str, fail: bool) -> io::Result<(bool, String)> {
     return match vars.get(key) {
-        Some(val) => Ok(val.to_string()),
+        Some(val) => Ok((true, val.to_string())),
         None => {
             if fail {
                 Err(io::Error::new(
@@ -15,7 +16,7 @@ fn replacement(vars: &Dict<String>, key: &str, fail: bool) -> io::Result<String>
                     format!("Undefined variable '{}'", key),
                 ))
             } else {
-                Ok(format!("${{{}}}", key))
+                Ok((false, format!("${{{}}}", key)))
             }
         }
     };
@@ -28,12 +29,13 @@ enum ReplState {
     Key,
 }
 
-fn replace_in_string(vars: &Dict<String>, line: &str, fail: bool) -> io::Result<String> {
+pub fn replace_in_string<'t>(vars: &Dict<String>, line: &'t str, fail: bool) -> io::Result<Cow<'t, str>> {
     let mut state = ReplState::Text;
     let mut key = String::with_capacity(64);
     let mut buff_text = String::with_capacity(line.len());
     let mut buff_special = String::with_capacity(5);
     let mut buff_out = String::with_capacity(line.len() * 3 / 2);
+    let mut replaced = false;
     for chr in line.chars() {
         match state {
             ReplState::Text => {
@@ -67,6 +69,7 @@ fn replace_in_string(vars: &Dict<String>, line: &str, fail: bool) -> io::Result<
                         // so "$$${key_" -> "$${key_",
                         // for example
                         buff_special.remove(0);
+                        replaced = true;
                     }
                     state = ReplState::Text;
                     buff_out.push_str(&buff_special);
@@ -75,8 +78,9 @@ fn replace_in_string(vars: &Dict<String>, line: &str, fail: bool) -> io::Result<
             }
             ReplState::Key => {
                 if chr == '}' {
-                    let val = replacement(vars, &key, fail)?;
-                    buff_out.push_str(&val);
+                    let repl = replacement(vars, &key, fail)?;
+                    replaced = replaced || repl.0;
+                    buff_out.push_str(&repl.1);
                     key.clear();
                     state = ReplState::Text;
                 } else {
@@ -86,14 +90,20 @@ fn replace_in_string(vars: &Dict<String>, line: &str, fail: bool) -> io::Result<
         }
     }
 
-    buff_out.push_str(&buff_text);
-    buff_out.push_str(&buff_special);
-    if matches!(state, ReplState::Key) {
-        buff_out.push_str("${");
-    }
-    buff_out.push_str(&key);
+    if replaced {
+        buff_out.push_str(&buff_text);
+        buff_out.push_str(&buff_special);
+        if matches!(state, ReplState::Key) {
+            buff_out.push_str("${");
+        }
+        buff_out.push_str(&key);
 
-    Ok(buff_out)
+        Ok(Cow::Owned(buff_out))
+    } else {
+        // There was no replacement at all
+        // -> return the input
+        Ok(Cow::Borrowed(line))
+    }
 }
 
 pub fn replace_in_stream(
