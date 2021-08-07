@@ -1,0 +1,104 @@
+#!/bin/bash
+
+# SPDX-FileCopyrightText: 2021 Robin Vobruba <hoijui.quaero@gmail.com>
+#
+# SPDX-License-Identifier: Unlicense
+
+# Exit immediately on each error and unset variable;
+# see: https://vaneyckt.io/posts/safer_bash_scripts_with_set_euxo_pipefail/
+set -Eeuo pipefail
+#set -Eeu
+
+script_dir=$(dirname "$(readlink -f "${BASH_SOURCE[0]}")")
+
+function _is_win() {
+
+  if [[ "$OSTYPE" == "cygwin" ]] \
+      || [[ "$OSTYPE" == "msys" ]] \
+      || [[ "$OSTYPE" == "win32" ]]
+  then
+    echo "true"
+  else
+    echo "false"
+  fi
+}
+
+# Application name
+name="${NAME:-$(basename "$(pwd)")}"
+# Binary name
+binary="${BINARY:-$name}"
+# Out version
+version="${OUR_VERSION:-$($script_dir/version)}"
+# Target sppecifics (arch, os, base-lib, ...)
+target="${TARGET:-}"
+# Operating system (rust target string)
+os="${OS:-}"
+# Environment file
+env_file="${GITHUB_ENV:-}"
+
+if [ -n "$os" ]
+then
+  is_win="$([ "$os" = "windows-2019" ] && echo -n "true" || echo -n "false")"
+else
+  is_win="${IS_WIN:-$(_is_win)}"
+fi
+
+staging="target/$name-$version"
+target_path=""
+
+if [ -n "$target" ]
+then
+  #target="$OSTYPE-$(uname -m)"
+  staging="$staging-$target"
+  target_path="$target/"
+fi
+
+mkdir -p "$staging"
+# mkdir -p "$staging"/{complete,doc}
+
+find . -maxdepth 1 \
+    \( \
+    -name "*LICENSE*" -o \
+    -name "*README*" -o \
+    -name "*COPYING*" -o \
+    -name "*AUTHORS*" -o \
+    -name "*FAQ*" -o \
+    -name "*CHANGELOG*" \
+    \) \
+    -exec cp -r {} "$staging/" \;
+
+bin_dir="target/${target_path}release"
+if $is_win
+then
+  bin_path="$bin_dir/$binary.exe"
+else
+  bin_path="$bin_dir/$binary"
+fi
+
+if [ ! -e "$bin_path" ]
+then
+  >&2 echo "ERROR: Binary ('$bin_path') does not exist! Maybe you forgot to build it (using 'cargo build --release')?"
+  exit 1
+fi
+
+cp "$bin_path" "$staging/"
+
+if $is_win
+then
+  asset="$staging.zip"
+  7z a "$asset" "$staging"
+else
+  # The man page is only generated on Unix systems. ¯\_(ツ)_/¯
+  # if [ -e "$outdir/$binary.1" ]
+  # then
+  #   cp "$outdir/$binary.1" "$staging/doc/"
+  # fi
+  asset="$staging.tar.gz"
+  tar czf "$asset" "$staging"
+fi
+
+if [ -n "$env_file" ]
+then
+  echo "ASSET=$asset" >> $env_file
+fi
+echo -n "$asset"

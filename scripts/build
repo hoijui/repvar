@@ -1,0 +1,27 @@
+#!/bin/bash
+
+# SPDX-FileCopyrightText: 2021 Robin Vobruba <hoijui.quaero@gmail.com>
+#
+# SPDX-License-Identifier: Unlicense
+
+# Exit immediately on each error and unset variable;
+# see: https://vaneyckt.io/posts/safer_bash_scripts_with_set_euxo_pipefail/
+set -Eeuo pipefail
+#set -Eeu
+
+script_dir=$(dirname "$(readlink -f "${BASH_SOURCE[0]}")")
+
+# Application name
+name="${NAME:-$(basename "$(pwd)")}"
+# Binary name
+binary="${BINARY:-$name}"
+# The cargo binary (for some builds we use 'cross' instead of 'cargo')
+cargo="${CARGO:-cargo}"
+# Build flags
+flags="${TARGET_FLAGS:-}"
+# Path to the release binary
+binary_path="${BINARY_PATH:-"target/release/$binary"}"
+
+$cargo build --verbose --release $flags
+
+strip "$binary_path"

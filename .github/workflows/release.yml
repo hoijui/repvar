@@ -42,9 +42,7 @@ jobs:
         shell: bash
         if: env.OUR_VERSION == ''
         run: |
-          # Apparently, this is the right way to get a tag name. Really?
-          # See: https://github.community/t5/GitHub-Actions/How-to-get-just-the-tag-name/m-p/32167/highlight/true#M1027
-          OUR_VERSION="${GITHUB_REF#refs/tags/}"
+          OUR_VERSION="$(scripts/version)"
           echo "OUR_VERSION=$OUR_VERSION" >> $GITHUB_ENV
           echo "version is: $OUR_VERSION"
       - name: Create GitHub release
@@ -63,6 +61,9 @@ jobs:
     env:
       NAME: repvar
       BINARY: repvar
+      TARGET: ${{ matrix.target }}
+      BINARY_PATH: "target/${{ matrix.target }}/release/${{ env.BINARY }}"
+      OS: ${{ matrix.os }}
       # For some builds, we use cross to test on 32-bit and big-endian
       # systems.
       CARGO: cargo
@@ -127,13 +128,13 @@ jobs:
         override: true
         target: ${{ matrix.target }}
 
-    - name: Use Cross
-      shell: bash
-      run: |
-        cargo install cross
-        echo "CARGO=cross" >> $GITHUB_ENV
-        echo "TARGET_FLAGS=--target ${{ matrix.target }}" >> $GITHUB_ENV
-        echo "TARGET_DIR=./target/${{ matrix.target }}" >> $GITHUB_ENV
+    # - name: Use Cross
+    #   shell: bash
+    #   run: |
+    #     cargo install cross
+    #     echo "CARGO=cross" >> $GITHUB_ENV
+    #     echo "TARGET_FLAGS=--target ${{ matrix.target }}" >> $GITHUB_ENV
+    #     echo "TARGET_DIR=./target/${{ matrix.target }}" >> $GITHUB_ENV
 
     - name: Show command used for Cargo
       run: |
@@ -141,12 +142,12 @@ jobs:
         echo "target flag is: ${{ env.TARGET_FLAGS }}"
         echo "target dir is: ${{ env.TARGET_DIR }}"
 
-    - name: Build release binary
-      run: ${{ env.CARGO }} build --verbose --release ${{ env.TARGET_FLAGS }}
+    - name: Build and strip release binary
+      run: scripts/build
 
-    - name: Strip release binary (linux and macos)
-      if: matrix.build == 'linux' || matrix.build == 'macos'
-      run: strip "target/${{ matrix.target }}/release/${{ env.BINARY }}"
+    # - name: Strip release binary (linux and macos)
+    #   if: matrix.build == 'linux' || matrix.build == 'macos'
+    #   run: strip "${{ env.BINARY_PATH }}"
 
     # - name: Strip release binary (arm)
     #   if: matrix.build == 'linux-arm'
@@ -160,31 +161,13 @@ jobs:
     - name: Build archive
       shell: bash
       run: |
-        # outdir="$(ci/cargo-out-dir "${{ env.TARGET_DIR }}")"
-        staging="${{ env.NAME }}-${{ needs.create-release.outputs.our_version }}-${{ matrix.target }}"
-        mkdir -p "$staging"/{complete,doc}
-
-        find . -maxdepth 1 \
-            -name "*LICENSE*" -o \
-            -name "*README*" -o \
-            -name "*COPYING*" -o \
-            -name "*AUTHORS*" -o \
-            -name "*FAQ*" -o \
-            -name "*CHANGELOG*" \
-            -exec cp {} "$staging/" \;
-        #cp "$outdir"/{${{ env.BINARY }}.bash,${{ env.BINARY }}.fish,_${{ env.BINARY }}.ps1} "$staging/complete/"
-
-        if [ "${{ matrix.os }}" = "windows-2019" ]; then
-          cp "target/${{ matrix.target }}/release/${{ env.BINARY }}.exe" "$staging/"
-          7z a "$staging.zip" "$staging"
-          echo "ASSET=$staging.zip" >> $GITHUB_ENV
-        else
-          # The man page is only generated on Unix systems. ¯\_(ツ)_/¯
-          #cp "$outdir"/${{ env.BINARY }}.1 "$staging/doc/"
-          cp "target/${{ matrix.target }}/release/${{ env.BINARY }}" "$staging/"
-          tar czf "$staging.tar.gz" "$staging"
-          echo "ASSET=$staging.tar.gz" >> $GITHUB_ENV
-        fi
+        # export NAME="${{ env.NAME }}"
+        # export BINARY="${{ env.BINARY }}"
+        # export VERSION="${{ needs.create-release.outputs.our_version }}"
+        # export TARGET="${{ matrix.target }}"
+        # export OS="${{ matrix.os }}"
+        # export GITHUB_ENV="$GITHUB_ENV"
+        scripts/package
 
     - name: Upload release archive
       uses: actions/upload-release-asset@v1.0.1
