@@ -59,7 +59,7 @@ jobs:
       NAME: repvar
       BINARY: repvar
       TARGET: ${{ matrix.target }}
-      BINARY_PATH: "target/${{ matrix.target }}/release/${{ env.BINARY }}"
+      BINARY_PATH: "target/${{ matrix.target }}/release/$BINARY"
       OS: ${{ matrix.os }}
       # For some builds, we use cross to test on 32-bit and big-endian
       # systems.
