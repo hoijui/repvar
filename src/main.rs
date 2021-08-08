@@ -86,7 +86,7 @@ fn main() -> Result<()> {
     // enlist variables provided on the CLI
     if args.occurrences_of("variable") > 0 {
         for kvp in args
-            .values_of_t::<key_value::KeyValuePair>("variable")
+            .values_of_t::<key_value::Pair>("variable")
             .unwrap_or_else(|e| e.exit())
         {
             vars.add(kvp.key, kvp.value);
