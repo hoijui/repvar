@@ -128,7 +128,7 @@ pub fn replace_in_string<'t>(
 /// # Errors
 ///
 /// If a variable key was found in the stream,
-/// but `vars` contains n oentry for it,
+/// but `vars` contains no entry for it,
 /// and `fail_on_missing` is `true`.
 ///
 /// If reading from the input failed.
