@@ -5,3 +5,9 @@
 pub mod key_value;
 pub mod replacer;
 pub mod tools;
+
+// This tests rust code in the README with doc-tests.
+// It will not appear in the generated documentaton, though.
+#[doc = include_str!("../README.md")]
+#[cfg(doctest)]
+pub struct ReadmeDoctests;
