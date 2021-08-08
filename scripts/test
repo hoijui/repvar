@@ -11,12 +11,25 @@ set -Eeuo pipefail
 
 script_dir=$(dirname "$(readlink -f "${BASH_SOURCE[0]}")")
 
-cargo test
-cargo fmt -- --check
-cargo clippy -- --deny clippy::pedantic --allow clippy::ptr_arg # HACK We disable this check, as clippy falsely thinks Dict's could be replaced by Vec's
+# We run all tests, even if some are failing.
+
+exit=0
+
+cargo test || exit=$?
+
+cargo fmt -- --check || exit=$?
+
+# HACK We disable the `ptr_arg` check, because clippy falsely thinks a Dict can be replaced by a Vec.
+cargo clippy -- \
+  --deny clippy::pedantic \
+  --allow clippy::ptr_arg \
+  || exit=$?
+
 if which reuse
 then
-  reuse lint
+  reuse lint || exit=$?
 else
   echo "WARNING: REUSE tool not found; skipping licensing check."
 fi
+
+exit $exit
