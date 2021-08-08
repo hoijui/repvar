@@ -9,7 +9,8 @@
 set -Eeuo pipefail
 #set -Eeu
 
-script_dir=$(dirname "$(readlink -f "${BASH_SOURCE[0]}")")
+#script_dir=$(dirname "$(readlink -f "${BASH_SOURCE[0]}")")
+#source "$script_dir/env"
 
 # We run all tests, even if some are failing.
 
