@@ -70,4 +70,7 @@ git tag -a -m "Release repvar version $new_version" "$new_version"
 if $push
 then
   git push origin --tags master
+else
+  echo "Ready to release with:"
+  echo "git push origin --tags master"
 fi
