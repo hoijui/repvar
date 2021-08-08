@@ -97,15 +97,16 @@ fn main() -> Result<()> {
 
     if verbose {
         println!();
-        if let Some(ref in_file) = args.value_of("input") {
-            println!("INPUT: {}", in_file);
+        if let Some(in_file) = args.value_of("input") {
+            println!("INPUT: {}", &in_file);
         }
-        if let Some(ref out_file) = args.value_of("output") {
-            println!("OUTPUT: {}", out_file);
+        if let Some(out_file) = args.value_of("output") {
+            println!("OUTPUT: {}", &out_file);
         }
 
-        vars.iter()
-            .for_each(|o| println!("VARIABLE: {}={}", o.key, o.val));
+        for var in &vars {
+            println!("VARIABLE: {}={}", var.key, var.val);
+        }
         println!();
     }
 
