@@ -10,51 +10,10 @@ set -Eeuo pipefail
 #set -Eeu
 
 script_dir=$(dirname "$(readlink -f "${BASH_SOURCE[0]}")")
+source "$script_dir/env"
 
-function _is_win() {
-
-  if [[ "$OSTYPE" == "cygwin" ]] \
-      || [[ "$OSTYPE" == "msys" ]] \
-      || [[ "$OSTYPE" == "win32" ]]
-  then
-    echo "true"
-  else
-    echo "false"
-  fi
-}
-
-# Application name
-name="${NAME:-$(basename "$(pwd)")}"
-# Binary name
-binary="${BINARY:-$name}"
-# Out version
-version="${OUR_VERSION:-$($script_dir/version)}"
-# Target sppecifics (arch, os, base-lib, ...)
-target="${TARGET:-}"
-# Operating system (rust target string)
-os="${OS:-}"
-# Environment file
-env_file="${GITHUB_ENV:-}"
-
-if [ -n "$os" ]
-then
-  is_win="$([ "$os" = "windows-2019" ] && echo -n "true" || echo -n "false")"
-else
-  is_win="${IS_WIN:-$(_is_win)}"
-fi
-
-staging="target/$name-$version"
-target_path=""
-
-if [ -n "$target" ]
-then
-  #target="$OSTYPE-$(uname -m)"
-  staging="$staging-$target"
-  target_path="$target/"
-fi
-
-mkdir -p "$staging"
-# mkdir -p "$staging"/{complete,doc}
+mkdir -p "$STAGING"
+# mkdir -p "$STAGING"/{complete,doc}
 
 find . -maxdepth 1 \
     \( \
@@ -65,40 +24,27 @@ find . -maxdepth 1 \
     -name "*FAQ*" -o \
     -name "*CHANGELOG*" \
     \) \
-    -exec cp -r {} "$staging/" \;
+    -exec cp -r {} "$STAGING/" \;
 
-bin_dir="target/${target_path}release"
-if $is_win
+if [ ! -e "$BINARY_PATH" ]
 then
-  bin_path="$bin_dir/$binary.exe"
-else
-  bin_path="$bin_dir/$binary"
-fi
-
-if [ ! -e "$bin_path" ]
-then
-  >&2 echo "ERROR: Binary ('$bin_path') does not exist! Maybe you forgot to build it (using 'cargo build --release')?"
+  {
+    echo "ERROR: Binary ('$BINARY_PATH') does not exist!"
+    echo "       Maybe you forgot to build it (using 'script/build' or 'cargo build --release')?"
+  } >&2
   exit 1
 fi
 
-cp "$bin_path" "$staging/"
+cp "$BINARY_PATH" "$STAGING/"
 
-if $is_win
+if $IS_WIN
 then
-  asset="$staging.zip"
-  7z a "$asset" "$staging"
+  7z a "$PACKAGE_ARCHIVE" "$STAGING"
 else
   # The man page is only generated on Unix systems. ¯\_(ツ)_/¯
   # if [ -e "$outdir/$binary.1" ]
   # then
   #   cp "$outdir/$binary.1" "$staging/doc/"
   # fi
-  asset="$staging.tar.gz"
-  tar czf "$asset" "$staging"
+  tar czf "$PACKAGE_ARCHIVE" "$STAGING"
 fi
-
-if [ -n "$env_file" ]
-then
-  echo "ASSET=$asset" >> $env_file
-fi
-echo -n "$asset"

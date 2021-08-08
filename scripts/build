@@ -10,18 +10,8 @@ set -Eeuo pipefail
 #set -Eeu
 
 script_dir=$(dirname "$(readlink -f "${BASH_SOURCE[0]}")")
+source "$script_dir/env"
 
-# Application name
-name="${NAME:-$(basename "$(pwd)")}"
-# Binary name
-binary="${BINARY:-$name}"
-# The cargo binary (for some builds we use 'cross' instead of 'cargo')
-cargo="${CARGO:-cargo}"
-# Build flags
-flags="${TARGET_FLAGS:-}"
-# Path to the release binary
-binary_path="${BINARY_PATH:-"target/release/$binary"}"
+$CARGO build --verbose --release $TARGET_FLAGS
 
-$cargo build --verbose --release $flags
-
-strip "$binary_path"
+strip "$BINARY_PATH"
