@@ -5,12 +5,13 @@
 use clap::{crate_authors, crate_version, App, Arg};
 use dict::{Dict, DictIface};
 use std::env;
+use std::io::Result;
 
 mod key_value;
 mod replacer;
 mod tools;
 
-fn main() {
+fn main() -> Result<()> {
     let args = App::new("repvars")
         .about("Given some text as input, replaces variables of the type `${KEY}` with a respective value.")
         .version(crate_version!())
@@ -92,9 +93,6 @@ fn main() {
         }
     }
 
-    let mut reader = tools::create_input_reader(args.value_of("input"));
-    let mut writer = tools::create_output_writer(args.value_of("output"));
-
     let fail: bool = args.is_present("fail-on-missing-values");
 
     if verbose {
@@ -111,8 +109,10 @@ fn main() {
         println!();
     }
 
-    let res = replacer::replace_in_stream(&vars, &mut reader, &mut writer, fail);
-    if res.is_err() {
-        eprint!("ERROR: {}", res.unwrap_err());
-    }
+    let mut reader = tools::create_input_reader(args.value_of("input"))?;
+    let mut writer = tools::create_output_writer(args.value_of("output"))?;
+
+    replacer::replace_in_stream(&vars, &mut reader, &mut writer, fail)?;
+
+    Ok(())
 }

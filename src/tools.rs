@@ -14,19 +14,23 @@ pub fn append_env(vars: &mut Dict<String>) {
     }
 }
 
-pub fn create_input_reader(ident: Option<&str>) -> Box<dyn BufRead> {
+pub fn create_input_reader(ident: Option<&str>) -> io::Result<Box<dyn BufRead>> {
     match ident {
-        None | Some("-") => Box::new(BufReader::new(io::stdin())),
-        Some(filename) => Box::new(BufReader::new(File::open(filename).unwrap())),
+        None | Some("-") => Ok(Box::new(BufReader::new(io::stdin()))),
+        Some(filename) => {
+            let file = File::open(filename)?;
+            Ok(Box::new(BufReader::new(file)))
+        }
     }
 }
 
-pub fn create_output_writer(ident: Option<&str>) -> Box<dyn Write> {
+pub fn create_output_writer(ident: Option<&str>) -> io::Result<Box<dyn Write>> {
     match ident {
-        None | Some("-") => Box::new(io::stdout()) as Box<dyn Write>,
+        None | Some("-") => Ok(Box::new(io::stdout()) as Box<dyn Write>),
         Some(file) => {
             let path = Path::new(file);
-            Box::new(File::create(&path).unwrap()) as Box<dyn Write>
+            let file = File::create(&path)?;
+            Ok(Box::new(file) as Box<dyn Write>)
         }
     }
 }
