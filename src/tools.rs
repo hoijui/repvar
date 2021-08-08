@@ -14,6 +14,12 @@ pub fn append_env(vars: &mut Dict<String>) {
     }
 }
 
+/// Creates a reader from a string identifier.
+/// Both `None` and `"-"` mean stdin.
+///
+/// # Errors
+///
+/// If a file path is specified, and it is not possible to read from it.
 pub fn create_input_reader(ident: Option<&str>) -> io::Result<Box<dyn BufRead>> {
     match ident {
         None | Some("-") => Ok(Box::new(BufReader::new(io::stdin()))),
@@ -24,6 +30,12 @@ pub fn create_input_reader(ident: Option<&str>) -> io::Result<Box<dyn BufRead>> 
     }
 }
 
+/// Creates a writer from a string identifier.
+/// Both `None` and `"-"` mean stdout.
+///
+/// # Errors
+///
+/// If a file path is specified, and it is not possible to write to it.
 pub fn create_output_writer(ident: Option<&str>) -> io::Result<Box<dyn Write>> {
     match ident {
         None | Some("-") => Ok(Box::new(io::stdout()) as Box<dyn Write>),

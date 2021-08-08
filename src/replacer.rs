@@ -33,6 +33,14 @@ enum ReplState {
     Key,
 }
 
+/// Replaces all occurences of variables of the form `${KEY}` in a string
+/// with their respective values.
+///
+/// # Errors
+///
+/// If a variable key was found in the stream,
+/// but `vars` contains no entry for it,
+/// and `fail_on_missing` is `true`.
 pub fn replace_in_string<'t>(
     vars: &Dict<String>,
     line: &'t str,
@@ -114,6 +122,18 @@ pub fn replace_in_string<'t>(
     }
 }
 
+/// Replaces all occurences of variables of the form `${KEY}` in a input stream
+/// with their respective values.
+///
+/// # Errors
+///
+/// If a variable key was found in the stream,
+/// but `vars` contains n oentry for it,
+/// and `fail_on_missing` is `true`.
+///
+/// If reading from the input failed.
+///
+/// If writing to the output failed.
 pub fn replace_in_stream(
     vars: &Dict<String>,
     reader: &mut Box<dyn BufRead>,
