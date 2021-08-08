@@ -99,7 +99,10 @@ if [ -n "$TARGET" ]
 then
   #TARGET="$OSTYPE-$(uname -m)"
   STAGING="$STAGING-$TARGET"
-  TARGET_DIR="$TARGET_DIR/$TARGET"
+  if [ "$CARGO" = "cross" ]
+  then
+    TARGET_DIR="$TARGET_DIR/$TARGET"
+  fi
 fi
 var_names+=("STAGING")
 var_names+=("TARGET_DIR")
