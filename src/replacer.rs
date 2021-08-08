@@ -114,29 +114,24 @@ pub fn replace_in_stream(
     vars: &Dict<String>,
     reader: &mut Box<dyn BufRead>,
     writer: &mut Box<dyn Write>,
-    fail: bool,
+    fail_on_missing: bool,
 ) -> io::Result<()> {
-    let mut input;
+    let mut input = String::new();
     // let interval = Duration::from_millis(1);
 
     loop {
-        input = String::new();
-        match reader.read_line(&mut input) {
-            Ok(n) => {
-                if n == 0 {
-                    // This means most likely that:
-                    // > This reader has reached its "end of file"
-                    // > and will likely no longer be able to produce bytes
-                    // as can be read here:
-                    // https://docs.w3cub.com/rust/std/io/trait.read#tymethod.read
-                    //eprintln!("Zero bytes read, ending it here (assuming EOF).");
-                    break;
-                }
-                // io::stdout().write_all(repl_vars_in(vars, &input, fail)?.as_bytes())?;
-                writer.write_all(replace_in_string(vars, &input, fail)?.as_bytes())?;
-            }
-            Err(error) => eprintln!("error: {}", error),
+        let n = reader.read_line(&mut input)?;
+        if n == 0 {
+            // This means most likely that:
+            // > This reader has reached its "end of file"
+            // > and will likely no longer be able to produce bytes
+            // as can be read here:
+            // https://docs.w3cub.com/rust/std/io/trait.read#tymethod.read
+            //eprintln!("Zero bytes read, ending it here (assuming EOF).");
+            break;
         }
+        // io::stdout().write_all(repl_vars_in(vars, &input, fail_on_missing)?.as_bytes())?;
+        writer.write_all(replace_in_string(vars, &input, fail_on_missing)?.as_bytes())?;
 
         // thread::sleep(interval);
     }
