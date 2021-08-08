@@ -6,11 +6,15 @@ use dict::{Dict, DictIface};
 use std::borrow::Cow;
 use std::io::{self, BufRead, Write};
 
-fn replacement(vars: &Dict<String>, key: &str, fail: bool) -> io::Result<(bool, String)> {
+fn replacement(
+    vars: &Dict<String>,
+    key: &str,
+    fail_on_missing: bool,
+) -> io::Result<(bool, String)> {
     return match vars.get(key) {
         Some(val) => Ok((true, val.to_string())),
         None => {
-            if fail {
+            if fail_on_missing {
                 Err(io::Error::new(
                     io::ErrorKind::NotFound,
                     format!("Undefined variable '{}'", key),
@@ -32,7 +36,7 @@ enum ReplState {
 pub fn replace_in_string<'t>(
     vars: &Dict<String>,
     line: &'t str,
-    fail: bool,
+    fail_on_missing: bool,
 ) -> io::Result<Cow<'t, str>> {
     let mut state = ReplState::Text;
     let mut key = String::with_capacity(64);
@@ -82,7 +86,7 @@ pub fn replace_in_string<'t>(
             }
             ReplState::Key => {
                 if chr == '}' {
-                    let repl = replacement(vars, &key, fail)?;
+                    let repl = replacement(vars, &key, fail_on_missing)?;
                     replaced = replaced || repl.0;
                     buff_out.push_str(&repl.1);
                     key.clear();

@@ -93,7 +93,7 @@ fn main() -> Result<()> {
         }
     }
 
-    let fail: bool = args.is_present("fail-on-missing-values");
+    let fail_on_missing: bool = args.is_present("fail-on-missing-values");
 
     if verbose {
         println!();
@@ -112,7 +112,7 @@ fn main() -> Result<()> {
     let mut reader = tools::create_input_reader(args.value_of("input"))?;
     let mut writer = tools::create_output_writer(args.value_of("output"))?;
 
-    replacer::replace_in_stream(&vars, &mut reader, &mut writer, fail)?;
+    replacer::replace_in_stream(&vars, &mut reader, &mut writer, fail_on_missing)?;
 
     Ok(())
 }
