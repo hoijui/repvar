@@ -37,6 +37,14 @@ cargo clippy -- \
 
 echo
 echo
+echo "TEST: 'cargo test' - Building documentaiton and running docu code ..."
+# This flag will run your code examples as tests.
+# For more, see the chapter on documentation tests:
+# https://doc.rust-lang.org/rustdoc/documentation-tests.html
+cargo test --release --doc || exit=$?
+
+echo
+echo
 echo "TEST: 'cargo clippy' - Licensing meta-data check ..."
 if which reuse > /dev/null
 then
