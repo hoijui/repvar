@@ -16,16 +16,28 @@ set -Eeuo pipefail
 
 exit=0
 
+echo
+echo
+echo "TEST: 'cargo test' - Run unit-tests ..."
 cargo test || exit=$?
 
+echo
+echo
+echo "TEST: 'cargo fmt' - Check source code formatting ..."
 cargo fmt -- --check || exit=$?
 
+echo
+echo
+echo "TEST: 'cargo clippy' - Static code linting ..."
 # HACK We disable the `ptr_arg` check, because clippy falsely thinks a Dict can be replaced by a Vec.
 cargo clippy -- \
   --deny clippy::pedantic \
   --allow clippy::ptr_arg \
   || exit=$?
 
+echo
+echo
+echo "TEST: 'cargo clippy' - Licensing meta-data check ..."
 if which reuse > /dev/null
 then
   reuse lint || exit=$?
