@@ -26,7 +26,7 @@ cargo clippy -- \
   --allow clippy::ptr_arg \
   || exit=$?
 
-if which reuse
+if which reuse > /dev/null
 then
   reuse lint || exit=$?
 else
