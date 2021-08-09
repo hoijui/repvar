@@ -48,7 +48,6 @@ pub fn replace_in_string<'t>(
 ) -> io::Result<Cow<'t, str>> {
     let mut state = ReplState::Text;
     let mut key = String::with_capacity(64);
-    let mut buff_text = String::with_capacity(line.len());
     let mut buff_special = String::with_capacity(5);
     let mut buff_out = String::with_capacity(line.len() * 3 / 2);
     let mut replaced = false;
@@ -57,11 +56,9 @@ pub fn replace_in_string<'t>(
             ReplState::Text => {
                 if chr == '$' {
                     state = ReplState::Dollar1;
-                    buff_out.push_str(&buff_text);
-                    buff_text.clear();
                     buff_special.push(chr);
                 } else {
-                    buff_text.push(chr);
+                    buff_out.push(chr);
                 }
             }
             ReplState::Dollar1 => {
@@ -107,7 +104,6 @@ pub fn replace_in_string<'t>(
     }
 
     if replaced {
-        buff_out.push_str(&buff_text);
         buff_out.push_str(&buff_special);
         if matches!(state, ReplState::Key) {
             buff_out.push_str("${");
