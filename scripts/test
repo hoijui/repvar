@@ -19,7 +19,7 @@ exit=0
 echo
 echo
 echo "TEST: 'cargo test' - Run unit-tests ..."
-cargo test || exit=$?
+cargo test --release --lib || exit=$?
 
 echo
 echo
