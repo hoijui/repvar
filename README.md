@@ -34,6 +34,13 @@ the variables can be read from the environment
 or be directly supplied through CLI switches
 like `-Dkey=value`.
 
+> **NOTE** \
+> The author is a rust-newb.
+> This crate probably only makes sense for himself,
+> and it is not using the power of rust as should be.
+> It also could probably be written in just 10 lines of code,
+> using one or two regexes, not loosing any performance.
+
 ## Usage
 
 A Simplisitc example:
