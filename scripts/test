@@ -30,7 +30,7 @@ echo
 echo
 echo "TEST: 'cargo clippy' - Static code linting ..."
 # HACK We disable the `ptr_arg` check, because clippy falsely thinks a Dict can be replaced by a Vec.
-cargo clippy -- \
+cargo clippy --release -- \
   --deny clippy::pedantic \
   --allow clippy::ptr_arg \
   || exit=$?
