@@ -30,7 +30,7 @@ if which reuse > /dev/null
 then
   reuse lint || exit=$?
 else
-  echo "WARNING: REUSE tool not found; skipping licensing check."
+  echo "WARNING: REUSE tool not found; skipping licensing meta-data check."
 fi
 
 exit $exit
