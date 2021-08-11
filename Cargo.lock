@@ -67,12 +67,6 @@ dependencies = [
 ]
 
 [[package]]
-name = "dict"
-version = "0.1.5"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "39fbb71fba1e2c935f51b056de0d812d9b625b8165b2d7f8848902080fbdffb4"
-
-[[package]]
 name = "hashbrown"
 version = "0.11.2"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -194,7 +188,6 @@ name = "repvar"
 version = "0.1.17"
 dependencies = [
  "clap",
- "dict",
  "regex",
 ]
 

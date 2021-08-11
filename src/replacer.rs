@@ -2,12 +2,12 @@
 //
 // SPDX-License-Identifier: GPL-3.0-or-later
 
-use dict::{Dict, DictIface};
 use std::borrow::Cow;
+use std::collections::HashMap;
 use std::io::{self, BufRead, Write};
 
-fn replacement(
-    vars: &Dict<String>,
+fn replacement<S: ::std::hash::BuildHasher>(
+    vars: &HashMap<String, String, S>,
     key: &str,
     fail_on_missing: bool,
 ) -> io::Result<(bool, String)> {
@@ -41,8 +41,8 @@ enum ReplState {
 /// If a variable key was found in the stream,
 /// but `vars` contains no entry for it,
 /// and `fail_on_missing` is `true`.
-pub fn replace_in_string<'t>(
-    vars: &Dict<String>,
+pub fn replace_in_string<'t, S: ::std::hash::BuildHasher>(
+    vars: &HashMap<String, String, S>,
     line: &'t str,
     fail_on_missing: bool,
 ) -> io::Result<Cow<'t, str>> {
@@ -130,8 +130,8 @@ pub fn replace_in_string<'t>(
 /// If reading from the input failed.
 ///
 /// If writing to the output failed.
-pub fn replace_in_stream(
-    vars: &Dict<String>,
+pub fn replace_in_stream<S: ::std::hash::BuildHasher>(
+    vars: &HashMap<String, String, S>,
     reader: &mut Box<dyn BufRead>,
     writer: &mut Box<dyn Write>,
     fail_on_missing: bool,
@@ -167,7 +167,7 @@ mod tests {
 
     #[test]
     fn test_replace_in_string_no_vars() {
-        let vars = Dict::<String>::new();
+        let vars = HashMap::new();
         let input = "a ${key_a} $${key_a} b ${key_b} c";
         let expected = "a ${key_a} ${key_a} b ${key_b} c";
         let actual = replace_in_string(&vars, input, false).unwrap();
@@ -176,8 +176,8 @@ mod tests {
 
     #[test]
     fn test_replace_in_string_one_var() {
-        let mut vars = Dict::<String>::new();
-        vars.add("key_a".to_string(), "1".to_string());
+        let mut vars = HashMap::new();
+        vars.insert("key_a".to_string(), "1".to_string());
         let input = "a ${key_a} $${key_a} b ${key_b} c";
         let expected = "a 1 ${key_a} b ${key_b} c";
         let actual = replace_in_string(&vars, input, false).unwrap();
@@ -186,9 +186,9 @@ mod tests {
 
     #[test]
     fn test_replace_in_string_two_vars() {
-        let mut vars = Dict::<String>::new();
-        vars.add("key_a".to_string(), "1".to_string());
-        vars.add("key_b".to_string(), "2".to_string());
+        let mut vars = HashMap::new();
+        vars.insert("key_a".to_string(), "1".to_string());
+        vars.insert("key_b".to_string(), "2".to_string());
         let input = "a ${key_a} $${key_a} b ${key_b} c";
         let expected = "a 1 ${key_a} b 2 c";
         let actual = replace_in_string(&vars, input, false).unwrap();
@@ -197,9 +197,9 @@ mod tests {
 
     #[test]
     fn test_replace_in_string_case_sensitive() {
-        let mut vars = Dict::<String>::new();
-        vars.add("Key_A".to_string(), "1".to_string());
-        vars.add("key_b".to_string(), "2".to_string());
+        let mut vars = HashMap::new();
+        vars.insert("Key_A".to_string(), "1".to_string());
+        vars.insert("key_b".to_string(), "2".to_string());
         let input = "a ${key_a} $${key_a} b ${key_b} c";
         let expected = "a ${key_a} ${key_a} b 2 c";
         let actual = replace_in_string(&vars, input, false).unwrap();
@@ -208,8 +208,8 @@ mod tests {
 
     #[test]
     fn test_replace_in_string_missing_closing_bracket() {
-        let mut vars = Dict::<String>::new();
-        vars.add("key_a".to_string(), "1".to_string());
+        let mut vars = HashMap::new();
+        vars.insert("key_a".to_string(), "1".to_string());
         let input = "a ${key_a";
         let expected = "a ${key_a";
         let actual = replace_in_string(&vars, input, false).unwrap();
@@ -218,8 +218,8 @@ mod tests {
 
     #[test]
     fn test_replace_in_string_missing_closing_bracket_and_key() {
-        let mut vars = Dict::<String>::new();
-        vars.add("key_a".to_string(), "1".to_string());
+        let mut vars = HashMap::new();
+        vars.insert("key_a".to_string(), "1".to_string());
         let input = "a ${";
         let expected = "a ${";
         let actual = replace_in_string(&vars, input, false).unwrap();
@@ -228,8 +228,8 @@ mod tests {
 
     #[test]
     fn test_replace_in_string_missing_closing_bracket_quoted() {
-        let mut vars = Dict::<String>::new();
-        vars.add("key_a".to_string(), "1".to_string());
+        let mut vars = HashMap::new();
+        vars.insert("key_a".to_string(), "1".to_string());
         let input = "a $${key_a";
         let expected = "a ${key_a"; // NOTE Do we really want it this way, or should there still be two $$? this way is easy to implement, the other way seems more correct
         let actual = replace_in_string(&vars, input, false).unwrap();
@@ -237,7 +237,7 @@ mod tests {
     }
     #[test]
     fn test_replace_in_string_missing_closing_bracket_and_key_quoted() {
-        let vars = Dict::<String>::new();
+        let vars = HashMap::new();
         let input = "a $${";
         let expected = "a ${"; // NOTE Do we really want it this way, or should there still be two $$? this way is easy to implement, the other way seems more correct
         let actual = replace_in_string(&vars, input, false).unwrap();

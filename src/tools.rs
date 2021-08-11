@@ -2,15 +2,15 @@
 //
 // SPDX-License-Identifier: GPL-3.0-or-later
 
-use dict::{Dict, DictIface};
+use std::collections::HashMap;
 use std::env;
 use std::fs::File;
 use std::io::{self, BufRead, BufReader, Write};
 use std::path::Path;
 
-pub fn append_env(vars: &mut Dict<String>) {
+pub fn append_env<S: ::std::hash::BuildHasher>(vars: &mut HashMap<String, String, S>) {
     for env_var in env::vars() {
-        vars.add(env_var.0, env_var.1);
+        vars.insert(env_var.0, env_var.1);
     }
 }
 

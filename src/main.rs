@@ -3,7 +3,7 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 
 use clap::{crate_authors, crate_version, App, Arg};
-use dict::{Dict, DictIface};
+use std::collections::HashMap;
 use std::env;
 use std::io::Result;
 
@@ -76,7 +76,7 @@ fn main() -> Result<()> {
 
     let verbose: bool = args.is_present("verbose");
 
-    let mut vars = Dict::<String>::new();
+    let mut vars = HashMap::new();
 
     // enlist environment variables
     if args.is_present("environment") {
@@ -89,7 +89,7 @@ fn main() -> Result<()> {
             .values_of_t::<key_value::Pair>("variable")
             .unwrap_or_else(|e| e.exit())
         {
-            vars.add(kvp.key, kvp.value);
+            vars.insert(kvp.key, kvp.value);
         }
     }
 
@@ -104,8 +104,8 @@ fn main() -> Result<()> {
             println!("OUTPUT: {}", &out_file);
         }
 
-        for var in &vars {
-            println!("VARIABLE: {}={}", var.key, var.val);
+        for (key, value) in &vars {
+            println!("VARIABLE: {}={}", key, value);
         }
         println!();
     }
