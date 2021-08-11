@@ -113,7 +113,12 @@ fn main() -> Result<()> {
     let mut reader = tools::create_input_reader(args.value_of("input"))?;
     let mut writer = tools::create_output_writer(args.value_of("output"))?;
 
-    replacer::replace_in_stream(&vars, &mut reader, &mut writer, fail_on_missing)?;
+    let settings = replacer::Settings::builder()
+        .vars(Box::new(vars))
+        .fail_on_missing(fail_on_missing)
+        .verbose(verbose)
+        .build();
+    replacer::replace_in_stream(&mut reader, &mut writer, &settings)?;
 
     Ok(())
 }

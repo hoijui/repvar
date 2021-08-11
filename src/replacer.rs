@@ -5,16 +5,16 @@
 use std::borrow::Cow;
 use std::collections::HashMap;
 use std::io::{self, BufRead, Write};
+use typed_builder::TypedBuilder;
 
 fn replacement<S: ::std::hash::BuildHasher>(
-    vars: &HashMap<String, String, S>,
     key: &str,
-    fail_on_missing: bool,
+    settings: &Settings<S>,
 ) -> io::Result<(bool, String)> {
-    return match vars.get(key) {
+    return match settings.vars.get(key) {
         Some(val) => Ok((true, val.to_string())),
         None => {
-            if fail_on_missing {
+            if settings.fail_on_missing {
                 Err(io::Error::new(
                     io::ErrorKind::NotFound,
                     format!("Undefined variable '{}'", key),
@@ -33,8 +33,31 @@ enum ReplState {
     Key,
 }
 
+// #[derive(Debug)]
+#[derive(TypedBuilder)]
+pub struct Settings<S: ::std::hash::BuildHasher> {
+    vars: Box<HashMap<String, String, S>>,
+    #[builder(default = false)]
+    fail_on_missing: bool,
+    #[builder(default = false)]
+    verbose: bool,
+}
+
 /// Replaces all occurences of variables of the form `${KEY}` in a string
 /// with their respective values.
+///
+/// ```rust
+/// # use repvar::replacer::{replace_in_string, Settings};
+/// # use std::collections::HashMap;
+/// let mut vars = HashMap::new();
+/// vars.insert("key_a".to_string(), "1".to_string());
+/// vars.insert("key_b".to_string(), "2".to_string());
+/// let input = "a ${key_a} $${key_a} b ${key_b} c";
+/// let expected = "a 1 ${key_a} b 2 c";
+/// let actual =
+///     replace_in_string(input, &Settings::builder().vars(Box::new(vars)).build()).unwrap();
+/// assert_eq!(expected, actual);
+/// ```
 ///
 /// # Errors
 ///
@@ -42,9 +65,8 @@ enum ReplState {
 /// but `vars` contains no entry for it,
 /// and `fail_on_missing` is `true`.
 pub fn replace_in_string<'t, S: ::std::hash::BuildHasher>(
-    vars: &HashMap<String, String, S>,
     line: &'t str,
-    fail_on_missing: bool,
+    settings: &Settings<S>,
 ) -> io::Result<Cow<'t, str>> {
     let mut state = ReplState::Text;
     let mut key = String::with_capacity(64);
@@ -91,7 +113,7 @@ pub fn replace_in_string<'t, S: ::std::hash::BuildHasher>(
             }
             ReplState::Key => {
                 if chr == '}' {
-                    let repl = replacement(vars, &key, fail_on_missing)?;
+                    let repl = replacement(&key, settings)?;
                     replaced = replaced || repl.0;
                     buff_out.push_str(&repl.1);
                     key.clear();
@@ -131,10 +153,9 @@ pub fn replace_in_string<'t, S: ::std::hash::BuildHasher>(
 ///
 /// If writing to the output failed.
 pub fn replace_in_stream<S: ::std::hash::BuildHasher>(
-    vars: &HashMap<String, String, S>,
     reader: &mut Box<dyn BufRead>,
     writer: &mut Box<dyn Write>,
-    fail_on_missing: bool,
+    settings: &Settings<S>,
 ) -> io::Result<()> {
     let mut input = String::new();
     // let interval = Duration::from_millis(1);
@@ -151,7 +172,7 @@ pub fn replace_in_stream<S: ::std::hash::BuildHasher>(
             break;
         }
         // io::stdout().write_all(repl_vars_in(vars, &input, fail_on_missing)?.as_bytes())?;
-        writer.write_all(replace_in_string(vars, &input, fail_on_missing)?.as_bytes())?;
+        writer.write_all(replace_in_string(&input, settings)?.as_bytes())?;
 
         // thread::sleep(interval);
     }
@@ -170,7 +191,8 @@ mod tests {
         let vars = HashMap::new();
         let input = "a ${key_a} $${key_a} b ${key_b} c";
         let expected = "a ${key_a} ${key_a} b ${key_b} c";
-        let actual = replace_in_string(&vars, input, false).unwrap();
+        let actual =
+            replace_in_string(input, &Settings::builder().vars(Box::new(vars)).build()).unwrap();
         assert_eq!(expected, actual);
     }
 
@@ -180,7 +202,14 @@ mod tests {
         vars.insert("key_a".to_string(), "1".to_string());
         let input = "a ${key_a} $${key_a} b ${key_b} c";
         let expected = "a 1 ${key_a} b ${key_b} c";
-        let actual = replace_in_string(&vars, input, false).unwrap();
+        // NOTE For this to work, we would need to write a macro:
+        // some_fn! { a: "one", b: "two" }
+        // will simply translate to:
+        // some_fn(SomeFn::a("one").b("two").build())
+        // need to write a declarative macro on your own too, which can pretty advanced too, if you're new to macros. The compiler doesn't give you this.
+        //let actual = replace_in_string(input, settings! { vars: Box::new(vars) }.unwrap();
+        let actual =
+            replace_in_string(input, &Settings::builder().vars(Box::new(vars)).build()).unwrap();
         assert_eq!(expected, actual);
     }
 
@@ -191,7 +220,8 @@ mod tests {
         vars.insert("key_b".to_string(), "2".to_string());
         let input = "a ${key_a} $${key_a} b ${key_b} c";
         let expected = "a 1 ${key_a} b 2 c";
-        let actual = replace_in_string(&vars, input, false).unwrap();
+        let actual =
+            replace_in_string(input, &Settings::builder().vars(Box::new(vars)).build()).unwrap();
         assert_eq!(expected, actual);
     }
 
@@ -202,7 +232,8 @@ mod tests {
         vars.insert("key_b".to_string(), "2".to_string());
         let input = "a ${key_a} $${key_a} b ${key_b} c";
         let expected = "a ${key_a} ${key_a} b 2 c";
-        let actual = replace_in_string(&vars, input, false).unwrap();
+        let actual =
+            replace_in_string(input, &Settings::builder().vars(Box::new(vars)).build()).unwrap();
         assert_eq!(expected, actual);
     }
 
@@ -212,7 +243,8 @@ mod tests {
         vars.insert("key_a".to_string(), "1".to_string());
         let input = "a ${key_a";
         let expected = "a ${key_a";
-        let actual = replace_in_string(&vars, input, false).unwrap();
+        let actual =
+            replace_in_string(input, &Settings::builder().vars(Box::new(vars)).build()).unwrap();
         assert_eq!(expected, actual);
     }
 
@@ -222,7 +254,8 @@ mod tests {
         vars.insert("key_a".to_string(), "1".to_string());
         let input = "a ${";
         let expected = "a ${";
-        let actual = replace_in_string(&vars, input, false).unwrap();
+        let actual =
+            replace_in_string(input, &Settings::builder().vars(Box::new(vars)).build()).unwrap();
         assert_eq!(expected, actual);
     }
 
@@ -232,7 +265,8 @@ mod tests {
         vars.insert("key_a".to_string(), "1".to_string());
         let input = "a $${key_a";
         let expected = "a ${key_a"; // NOTE Do we really want it this way, or should there still be two $$? this way is easy to implement, the other way seems more correct
-        let actual = replace_in_string(&vars, input, false).unwrap();
+        let actual =
+            replace_in_string(input, &Settings::builder().vars(Box::new(vars)).build()).unwrap();
         assert_eq!(expected, actual);
     }
     #[test]
@@ -240,7 +274,8 @@ mod tests {
         let vars = HashMap::new();
         let input = "a $${";
         let expected = "a ${"; // NOTE Do we really want it this way, or should there still be two $$? this way is easy to implement, the other way seems more correct
-        let actual = replace_in_string(&vars, input, false).unwrap();
+        let actual =
+            replace_in_string(input, &Settings::builder().vars(Box::new(vars)).build()).unwrap();
         assert_eq!(expected, actual);
     }
 }

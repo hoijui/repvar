@@ -20,3 +20,4 @@ edition = "2018"
 [dependencies]
 clap = "3.0.0-beta.2"
 regex = "1"
+typed-builder = "0.9.0"
