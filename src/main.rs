@@ -8,8 +8,9 @@ use std::env;
 use std::io::Result;
 
 mod key_value;
-mod replacer;
 mod tools;
+#[macro_use]
+mod replacer;
 
 fn main() -> Result<()> {
     let args = App::new("repvars")
@@ -95,30 +96,16 @@ fn main() -> Result<()> {
 
     let fail_on_missing: bool = args.is_present("fail-on-missing-values");
 
-    if verbose {
-        println!();
-        if let Some(in_file) = args.value_of("input") {
-            println!("INPUT: {}", &in_file);
-        }
-        if let Some(out_file) = args.value_of("output") {
-            println!("OUTPUT: {}", &out_file);
-        }
+    let settings = settings! {
+        vars: Box::new(vars),
+        fail_on_missing: fail_on_missing,
+        verbose: verbose
+    };
 
-        for (key, value) in &vars {
-            println!("VARIABLE: {}={}", key, value);
-        }
-        println!();
-    }
+    let src = args.value_of("input");
+    let dst = args.value_of("output");
 
-    let mut reader = tools::create_input_reader(args.value_of("input"))?;
-    let mut writer = tools::create_output_writer(args.value_of("output"))?;
-
-    let settings = replacer::Settings::builder()
-        .vars(Box::new(vars))
-        .fail_on_missing(fail_on_missing)
-        .verbose(verbose)
-        .build();
-    replacer::replace_in_stream(&mut reader, &mut writer, &settings)?;
+    replacer::replace_in_file(src, dst, &settings)?;
 
     Ok(())
 }
