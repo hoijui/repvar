@@ -14,6 +14,17 @@ pub fn append_env<S: ::std::hash::BuildHasher>(vars: &mut HashMap<String, String
     }
 }
 
+pub fn flush_to_env<S: ::std::hash::BuildHasher>(
+    vars: &HashMap<String, String, S>,
+    overwrite: bool,
+) {
+    for (key, value) in vars {
+        if overwrite || env::var(key).is_err() {
+            env::set_var(key, value);
+        }
+    }
+}
+
 /// Creates a reader from a string identifier.
 /// Both `None` and `"-"` mean stdin.
 ///
