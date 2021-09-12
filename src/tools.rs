@@ -69,3 +69,31 @@ pub fn create_output_writer(ident: Option<&str>) -> io::Result<Box<dyn Write>> {
         }
     }
 }
+
+pub fn lines_iterator(
+    reader: &mut impl BufRead,
+) -> impl std::iter::Iterator<Item = io::Result<String>> + '_ {
+    // let interval = Duration::from_millis(1);
+
+    let mut buffer = String::new();
+    std::iter::from_fn(move || {
+        let read_bytes = reader.read_line(&mut buffer);
+        match read_bytes {
+            Ok(read_bytes) => {
+                if read_bytes == 0 {
+                    // This means most likely that:
+                    // > This reader has reached its "end of file"
+                    // > and will likely no longer be able to produce bytes
+                    // as can be read here:
+                    // https://docs.w3cub.com/rust/std/io/trait.read#tymethod.read
+                    //eprintln!("Zero bytes read, ending it here (assuming EOF).");
+                    None // end of iterator
+                } else {
+                    // io::stdout().write_all(repl_vars_in(vars, &buffer, fail_on_missing)?.as_bytes())?;
+                    Some(Ok(buffer.clone()))
+                }
+            }
+            Err(err) => Some(Err(err)), // thread::sleep(interval);
+        }
+    })
+}
