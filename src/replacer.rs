@@ -173,7 +173,7 @@ pub fn replace_in_string<'t, S: ::std::hash::BuildHasher>(
 }
 
 pub fn lines_iterator(
-    reader: &mut Box<dyn BufRead>,
+    reader: &mut impl BufRead,
 ) -> impl std::iter::Iterator<Item = io::Result<String>> + '_ {
     // let interval = Duration::from_millis(1);
 
@@ -213,8 +213,8 @@ pub fn lines_iterator(
 ///
 /// If writing to the `writer` failed.
 pub fn replace_in_stream<S: ::std::hash::BuildHasher>(
-    reader: &mut Box<dyn BufRead>,
-    writer: &mut Box<dyn Write>,
+    reader: &mut impl BufRead,
+    writer: &mut impl Write,
     settings: &Settings<S>,
 ) -> io::Result<()> {
     if settings.verbose {
