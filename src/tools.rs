@@ -14,15 +14,25 @@ pub fn append_env<S: ::std::hash::BuildHasher>(vars: &mut HashMap<String, String
     }
 }
 
-pub fn flush_to_env<S: ::std::hash::BuildHasher>(
+pub fn flush_to_env<'a>(vars: impl Iterator<Item = (&'a String, &'a String)>, overwrite: bool) {
+    for (key, value) in vars {
+        if overwrite || env::var(&key).is_err() {
+            env::set_var(&key, &value);
+        }
+    }
+}
+
+pub fn flush_map_to_env<S: ::std::hash::BuildHasher>(
     vars: &HashMap<String, String, S>,
     overwrite: bool,
 ) {
-    for (key, value) in vars {
-        if overwrite || env::var(key).is_err() {
-            env::set_var(key, value);
-        }
-    }
+    flush_to_env(
+        Box::new(
+            vars.iter()
+                .map(|key_and_value| (key_and_value.0, key_and_value.1)),
+        ),
+        overwrite,
+    );
 }
 
 /// Creates a reader from a string identifier.
