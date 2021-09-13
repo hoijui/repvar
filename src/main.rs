@@ -13,7 +13,7 @@ mod tools;
 mod replacer;
 
 fn main() -> Result<()> {
-    let args = App::new("repvars")
+    let args = App::new("repvar")
         .about("Given some text as input, replaces variables of the type `${KEY}` with a respective value.")
         .version(crate_version!())
         .author(crate_authors!())
