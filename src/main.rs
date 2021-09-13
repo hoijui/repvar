@@ -25,7 +25,7 @@ fn main() -> Result<()> {
                 .long("input")
                 .multiple_occurrences(false)
                 .default_value("-")
-                .required(true)
+                .required(false)
         )
         .arg(
             Arg::new("output")
@@ -35,7 +35,7 @@ fn main() -> Result<()> {
                 .long("output")
                 .multiple_occurrences(false)
                 .default_value("-")
-                .required(true)
+                .required(false)
         )
         .arg(
             Arg::new("variable")
