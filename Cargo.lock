@@ -107,9 +107,9 @@ checksum = "e2abad23fbc42b3700f2f279844dc832adb2b2eb069b2df918f455c4e18cc646"
 
 [[package]]
 name = "libc"
-version = "0.2.99"
+version = "0.2.101"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "a7f823d141fe0a24df1e23b4af4e3c7ba9e5966ec514ea068c93024aa7deb765"
+checksum = "3cb00336871be5ed2c8ed44b60ae9959dc5b9f08539422ed43f09e34ecaeba21"
 
 [[package]]
 name = "memchr"
@@ -149,9 +149,9 @@ dependencies = [
 
 [[package]]
 name = "proc-macro2"
-version = "1.0.28"
+version = "1.0.29"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "5c7ed8b8c7b886ea3ed7dde405212185f423ab44682667c8c6dd14aa1d9f6612"
+checksum = "b9f5105d4fdaab20335ca9565e106a5d9b82b6219b5ba735731124ac6711d23d"
 dependencies = [
  "unicode-xid",
 ]
@@ -199,9 +199,9 @@ checksum = "73473c0e59e6d5812c5dfe2a064a6444949f089e20eec9a2e5506596494e4623"
 
 [[package]]
 name = "syn"
-version = "1.0.74"
+version = "1.0.76"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "1873d832550d4588c3dbc20f01361ab00bfe741048f71e3fecf145a7cc18b29c"
+checksum = "c6f107db402c2c2055242dbf4d2af0e69197202e9faacbef9571bbe47f5a1b84"
 dependencies = [
  "proc-macro2",
  "quote",
@@ -228,8 +228,8 @@ dependencies = [
 
 [[package]]
 name = "typed-builder"
-version = "0.9.0"
-source = "git+https://github.com/idanarye/rust-typed-builder.git#69d6aac815eda708557414b62fad9e02c4e3f452"
+version = "0.9.1"
+source = "git+https://github.com/idanarye/rust-typed-builder.git#9bc37d841e6a04e5ab7f3a155a254f072db57603"
 dependencies = [
  "proc-macro2",
  "quote",
