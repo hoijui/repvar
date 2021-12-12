@@ -3,6 +3,7 @@
 # SPDX-License-Identifier: Unlicense
 
 name: build
+
 on:
   push:
     branches: [ master ]
@@ -10,38 +11,54 @@ on:
       - 'src/**'
       - 'Cargo.toml'
       - 'Cargo.lock'
+      - '.github/workflows/build.yml'
   release:
     types: [ published ]
+
+env:
+  STOML_VERSION: "v0.7.0"
+
 jobs:
   push_to_registry:
     name: Compile
     runs-on: ubuntu-latest
     steps:
-      - name: Check out the repo
+      - name: "Check out the repo"
         uses: actions/checkout@v2
         with:
           submodules: true
-      - name: Get the Rust toolchain
+
+      - name: "Install STOML (BASH TOML parser)"
+        run: |
+          mkdir -p "target/tools"
+          wget "https://github.com/freshautomations/stoml/releases/download/${{ env.STOML_VERSION }}/stoml_linux_amd64" \
+              -O "target/tools/stoml"
+          chmod +x "target/tools/stoml"
+
+      - name: "Setup Python 3"
+        uses: actions/setup-python@v2
+        with:
+            python-version: '3.x'
+
+      - name: "Install the RESUE tool"
+        uses: BSFishy/pip-action@v1
+        with:
+          packages: |
+            reuse
+
+      - name: "Get the Rust toolchain"
         uses: actions-rs/toolchain@v1
         with:
             toolchain: stable
             override: true
             components: rustfmt, clippy
-      # Smart caching for rust/cargo projects with sensible defaults.
-      - uses: Swatinem/rust-cache@v1
-      # # `cargo check` command here will use installed `nightly`
-      # # as it is set as an "override" for current directory
-      # - name: Cargo check
-      #   uses: actions-rs/cargo@v1
-      #   with:
-      #     command: check
-      # - name: Cargo build
-      #   uses: actions-rs/cargo@v1
-      #   with:
-      #     command: build
-      #     args: --release
-      - name: Build
+
+      - name: "Smart caching for rust/cargo"
+        uses: Swatinem/rust-cache@v1
+
+      - name: "Build"
         run: scripts/build
-      - name: Test & Check
+
+      - name: "Test & Check"
         run: scripts/test
 

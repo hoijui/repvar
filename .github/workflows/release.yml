@@ -20,10 +20,15 @@
 # This file was copied from the ripgrep project, and then adjusted
 
 name: release
+
 on:
   push:
     tags:
     - "[0-9]+.[0-9]+.[0-9]+"
+
+env:
+  STOML_VERSION: "v0.7.0"
+
 jobs:
   create-release:
     name: create-release
@@ -38,10 +43,19 @@ jobs:
         with:
           fetch-depth: 0
           submodules: true
+
+      - name: "Install STOML (BASH TOML parser)"
+        run: |
+          mkdir -p "target/tools"
+          wget "https://github.com/freshautomations/stoml/releases/download/${{ env.STOML_VERSION }}/stoml_linux_amd64" \
+              -O "target/tools/stoml"
+          chmod +x "target/tools/stoml"
+
       - name: Set the environment variables (including OUR_VERSION)
         shell: bash
         if: env.OUR_VERSION == ''
         run: scripts/env
+
       - name: Create GitHub release
         id: release
         uses: actions/create-release@v1
@@ -106,6 +120,13 @@ jobs:
       with:
         fetch-depth: 0
         submodules: true
+
+    - name: "Install STOML (BASH TOML parser)"
+      run: |
+        mkdir -p "target/tools"
+        wget "https://github.com/freshautomations/stoml/releases/download/${{ env.STOML_VERSION }}/stoml_linux_amd64" \
+            -O "target/tools/stoml"
+        chmod +x "target/tools/stoml"
 
     - name: Set the environment variables (including OUR_VERSION)
       shell: bash
