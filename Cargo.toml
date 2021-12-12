@@ -15,18 +15,12 @@ license = "GPL-3.0-or-later"
 repository = "https://github.com/hoijui/repvar"
 keywords = ["cli", "ci", "variable-replacement"]
 categories = ["command-line-utilities", "text-processing"]
-edition = "2018"
+edition = "2021"
 
 [dependencies]
-clap = "3.0.0-beta.2"
+clap = { version = "3.0.0-rc.4", features = ["cargo"] }
 regex = "1"
-# NOTE We need current master for now,
-#      as it has `_phantom` correctly renamed to `phantom`,
-#      and thus does not trigger clippy:pedantic.
-#      As soon as a new release comes out (one after 0.9.0),
-#      we can switch again!
-#typed-builder = "0.9.0"
-typed-builder = { git = "https://github.com/idanarye/rust-typed-builder.git" }
+typed-builder = "0.9.1"
 
 [dev-dependencies]
 assert_cmd = "2.0"

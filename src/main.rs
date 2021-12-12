@@ -2,7 +2,7 @@
 //
 // SPDX-License-Identifier: GPL-3.0-or-later
 
-use clap::{crate_authors, crate_version, App, Arg};
+use clap::{app_from_crate, Arg};
 use std::collections::HashMap;
 use std::env;
 use std::io::Result;
@@ -13,13 +13,11 @@ mod tools;
 mod replacer;
 
 fn main() -> Result<()> {
-    let args = App::new("repvar")
+    let args = app_from_crate!()
         .about("Given some text as input, replaces variables of the type `${KEY}` with a respective value.")
-        .version(crate_version!())
-        .author(crate_authors!())
         .arg(
             Arg::new("input")
-                .about("the input file to use; '-' for stdin")
+                .help("the input file to use; '-' for stdin")
                 .takes_value(true)
                 .short('i')
                 .long("input")
@@ -29,7 +27,7 @@ fn main() -> Result<()> {
         )
         .arg(
             Arg::new("output")
-                .about("the output file to use; '-' for stdout")
+                .help("the output file to use; '-' for stdout")
                 .takes_value(true)
                 .short('o')
                 .long("output")
@@ -39,7 +37,7 @@ fn main() -> Result<()> {
         )
         .arg(
             Arg::new("variable")
-                .about("a variable key-value pair to be used for substitution in the text")
+                .help("a variable key-value pair to be used for substitution in the text")
                 .takes_value(true)
                 .short('D')
                 .long("variable")
@@ -48,7 +46,7 @@ fn main() -> Result<()> {
         )
         .arg(
             Arg::new("environment")
-                .about("use environment variables for substitution in the text")
+                .help("use environment variables for substitution in the text")
                 .takes_value(false)
                 .short('e')
                 .long("env")
@@ -57,7 +55,7 @@ fn main() -> Result<()> {
         )
         .arg(
             Arg::new("verbose")
-                .about("more verbose output (useful for debugging)")
+                .help("more verbose output (useful for debugging)")
                 .takes_value(false)
                 .short('v')
                 .long("verbose")
@@ -66,7 +64,7 @@ fn main() -> Result<()> {
         )
         .arg(
             Arg::new("fail-on-missing-values")
-                .about("fail if no value is available for a variable key found in the input text")
+                .help("fail if no value is available for a variable key found in the input text")
                 .takes_value(false)
                 .short('f')
                 .long("fail-on-missing-values")
