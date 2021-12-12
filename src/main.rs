@@ -4,7 +4,6 @@
 
 use clap::{app_from_crate, Arg};
 use std::collections::HashMap;
-use std::env;
 use std::io::Result;
 
 mod key_value;
