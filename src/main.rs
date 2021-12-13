@@ -2,7 +2,7 @@
 //
 // SPDX-License-Identifier: GPL-3.0-or-later
 
-use clap::{app_from_crate, Arg};
+use clap::{app_from_crate, App, Arg};
 use std::collections::HashMap;
 use std::io::Result;
 
@@ -11,8 +11,8 @@ mod tools;
 #[macro_use]
 mod replacer;
 
-fn main() -> Result<()> {
-    let args = app_from_crate!()
+fn create_app() -> App<'static> {
+    app_from_crate!()
         .about("Given some text as input, replaces variables of the type `${KEY}` with a respective value.")
         .arg(
             Arg::new("input")
@@ -70,7 +70,10 @@ fn main() -> Result<()> {
                 .multiple_occurrences(false)
                 .required(false)
         )
-        .get_matches();
+}
+
+fn main() -> Result<()> {
+    let args = create_app().get_matches();
 
     let verbose: bool = args.is_present("verbose");
 

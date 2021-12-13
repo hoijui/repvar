@@ -33,7 +33,6 @@ enum ReplState {
     Key,
 }
 
-// #[derive(Debug)]
 #[derive(TypedBuilder)]
 pub struct Settings<S: ::std::hash::BuildHasher> {
     vars: Box<HashMap<String, String, S>>,

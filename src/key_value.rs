@@ -3,7 +3,6 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 
 use regex::Regex;
-use std::error::Error;
 use std::fmt;
 use std::str::FromStr;
 
@@ -26,7 +25,7 @@ impl fmt::Display for ParseError {
     }
 }
 
-impl Error for ParseError {
+impl std::error::Error for ParseError {
     fn description(&self) -> &str {
         &self.details
     }
