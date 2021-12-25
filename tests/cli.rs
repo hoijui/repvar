@@ -59,6 +59,15 @@ fn simple_long_equals() -> Result<(), Box<dyn std::error::Error>> {
 }
 
 #[test]
+fn simple_new_line() -> Result<(), Box<dyn std::error::Error>> {
+    Tester::new(CMD)
+        .arg("-DKEY=value")
+        .stdin("This text contains a ${KEY} in its middle.\n")
+        .stdout("This text contains a value in its middle.\n")
+        .run_test()
+}
+
+#[test]
 fn quoting() -> Result<(), Box<dyn std::error::Error>> {
     Tester::new(CMD)
         .arg("-DKEY=value")
