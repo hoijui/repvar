@@ -77,6 +77,7 @@ pub fn lines_iterator(
 
     let mut buffer = String::new();
     std::iter::from_fn(move || {
+        buffer.clear();
         let read_bytes = reader.read_line(&mut buffer);
         match read_bytes {
             Ok(read_bytes) => {
