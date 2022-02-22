@@ -11,62 +11,75 @@ mod tools;
 #[macro_use]
 mod replacer;
 
+const A_S_INPUT: char = 'i';
+const A_L_INPUT: &str = "input";
+const A_S_OUTPUT: char = 'o';
+const A_L_OUTPUT: &str = "output";
+const A_S_VARIABLE: char = 'D';
+const A_L_VARIABLE: &str = "variable";
+const A_S_ENVIRONMENT: char = 'e';
+const A_L_ENVIRONMENT: &str = "env";
+const A_S_VERBOSE: char = 'v';
+const A_L_VERBOSE: &str = "verbose";
+const A_S_FAIL_ON_MISSING_VALUES: char = 'f';
+const A_L_FAIL_ON_MISSING_VALUES: &str = "fail-on-missing-values";
+
 fn create_app() -> App<'static> {
     app_from_crate!()
         .about("Given some text as input, replaces variables of the type `${KEY}` with a respective value.")
         .arg(
-            Arg::new("input")
-                .help("the input file to use; '-' for stdin")
+            Arg::new(A_L_INPUT)
+                .help("the input text file to use; '-' for stdin")
                 .takes_value(true)
-                .short('i')
-                .long("input")
+                .short(A_S_INPUT)
+                .long(A_L_INPUT)
                 .multiple_occurrences(false)
                 .default_value("-")
                 .required(false)
         )
         .arg(
-            Arg::new("output")
-                .help("the output file to use; '-' for stdout")
+            Arg::new(A_L_OUTPUT)
+                .help("the output text file to use; '-' for stdout")
                 .takes_value(true)
-                .short('o')
-                .long("output")
+                .short(A_S_OUTPUT)
+                .long(A_L_OUTPUT)
                 .multiple_occurrences(false)
                 .default_value("-")
                 .required(false)
         )
         .arg(
-            Arg::new("variable")
+            Arg::new(A_L_VARIABLE)
                 .help("a variable key-value pair to be used for substitution in the text")
                 .takes_value(true)
-                .short('D')
-                .long("variable")
+                .short(A_S_VARIABLE)
+                .long(A_L_VARIABLE)
                 .multiple_occurrences(true)
                 .required(false)
         )
         .arg(
-            Arg::new("environment")
+            Arg::new(A_L_ENVIRONMENT)
                 .help("use environment variables for substitution in the text")
                 .takes_value(false)
-                .short('e')
-                .long("env")
+                .short(A_S_ENVIRONMENT)
+                .long(A_L_ENVIRONMENT)
                 .multiple_occurrences(false)
                 .required(false)
         )
         .arg(
-            Arg::new("verbose")
+            Arg::new(A_L_VERBOSE)
                 .help("more verbose output (useful for debugging)")
                 .takes_value(false)
-                .short('v')
-                .long("verbose")
+                .short(A_S_VERBOSE)
+                .long(A_L_VERBOSE)
                 .multiple_occurrences(false)
                 .required(false)
         )
         .arg(
-            Arg::new("fail-on-missing-values")
+            Arg::new(A_L_FAIL_ON_MISSING_VALUES)
                 .help("fail if no value is available for a variable key found in the input text")
                 .takes_value(false)
-                .short('f')
-                .long("fail-on-missing-values")
+                .short(A_S_FAIL_ON_MISSING_VALUES)
+                .long(A_L_FAIL_ON_MISSING_VALUES)
                 .multiple_occurrences(false)
                 .required(false)
         )
@@ -75,26 +88,26 @@ fn create_app() -> App<'static> {
 fn main() -> Result<()> {
     let args = create_app().get_matches();
 
-    let verbose: bool = args.is_present("verbose");
+    let verbose: bool = args.is_present(A_L_VERBOSE);
 
     let mut vars = HashMap::new();
 
     // enlist environment variables
-    if args.is_present("environment") {
+    if args.is_present(A_L_ENVIRONMENT) {
         tools::append_env(&mut vars);
     }
 
     // enlist variables provided on the CLI
-    if args.occurrences_of("variable") > 0 {
+    if args.occurrences_of(A_L_VARIABLE) > 0 {
         for kvp in args
-            .values_of_t::<key_value::Pair>("variable")
+            .values_of_t::<key_value::Pair>(A_L_VARIABLE)
             .unwrap_or_else(|e| e.exit())
         {
             vars.insert(kvp.key, kvp.value);
         }
     }
 
-    let fail_on_missing: bool = args.is_present("fail-on-missing-values");
+    let fail_on_missing: bool = args.is_present(A_L_FAIL_ON_MISSING_VALUES);
 
     let settings = settings! {
         vars: vars,
@@ -102,8 +115,8 @@ fn main() -> Result<()> {
         verbose: verbose
     };
 
-    let src = args.value_of("input");
-    let dst = args.value_of("output");
+    let src = args.value_of(A_L_INPUT);
+    let dst = args.value_of(A_L_OUTPUT);
 
     replacer::replace_in_file(src, dst, &settings)?;
 
