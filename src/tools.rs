@@ -98,3 +98,41 @@ pub fn lines_iterator(
         }
     })
 }
+
+/// Returns an unquoted version of the input string,
+/// or the input string its self,
+/// if it was not quoted in the first place.
+///
+/// ```
+/// # use repvar::tools::unquote;
+/// assert_eq!(unquote(r#""Hello World""#), r#"Hello World"#);
+/// assert_eq!(unquote(r#" "Hello World" "#), r#" "Hello World" "#);
+/// assert_eq!(unquote(r#" "Hello World""#), r#" "Hello World""#);
+/// assert_eq!(unquote(r#""Hello World" "#), r#""Hello World" "#);
+/// assert_eq!(unquote(r#""Hello World"#), r#""Hello World"#);
+/// assert_eq!(unquote(r#"Hello World""#), r#"Hello World""#);
+/// assert_eq!(unquote(r#"'Hello World'"#), r#"Hello World"#);
+/// assert_eq!(unquote(r#" 'Hello World' "#), r#" 'Hello World' "#);
+/// assert_eq!(unquote(r#" 'Hello World'"#), r#" 'Hello World'"#);
+/// assert_eq!(unquote(r#"'Hello World' "#), r#"'Hello World' "#);
+/// assert_eq!(unquote(r#"'Hello World"#), r#"'Hello World"#);
+/// assert_eq!(unquote(r#"Hello World'"#), r#"Hello World'"#);
+/// assert_eq!(unquote(r#"Hello World"#), r#"Hello World"#);
+/// ```
+#[must_use]
+pub fn unquote(pot_quoted: &str) -> &str {
+    let len = pot_quoted.len();
+    if len > 1 {
+        let mut chars = pot_quoted.chars();
+        if let Some(first_char) = chars.next() {
+            if let Some(last_char) = chars.last() {
+                if (first_char == '"' && last_char == '"')
+                    || (first_char == '\'' && last_char == '\'')
+                {
+                    return &pot_quoted[1..len - 1];
+                }
+            }
+        }
+    }
+    pot_quoted
+}
