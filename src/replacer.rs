@@ -51,16 +51,13 @@ pub struct Settings<S: ::std::hash::BuildHasher> {
 /// ```rust
 /// # use repvar::replacer::Settings;
 /// # use repvar::settings;
-/// //#[macro_use(settings)]
 /// # use std::collections::HashMap;
 /// let mut vars = HashMap::new();
-/// // TODO This fails due to some stupid bug(-like thing) regarding Settings not found in this testing environment, even though it is found 2 lines further down
-/// //settings! {vars: Box::new(vars)};
+/// settings! {vars: vars};
 /// # // expands to:
 /// Settings::builder().vars(vars).build();
 /// ```
-#[macro_export]
-macro_rules! settings{
+macro_rules! settings {
     // match-like arm for the macro
     ($($p:ident:$v:expr),*) => {
         // the macro expands to this code
@@ -73,6 +70,7 @@ macro_rules! settings{
             .build()
     }
 }
+pub(crate) use settings;
 
 /// Replaces all occurences of variables of the form `${KEY}` in a string
 /// with their respective values.
