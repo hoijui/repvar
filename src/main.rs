@@ -97,7 +97,7 @@ fn main() -> Result<()> {
     let fail_on_missing: bool = args.is_present("fail-on-missing-values");
 
     let settings = settings! {
-        vars: Box::new(vars),
+        vars: vars,
         fail_on_missing: fail_on_missing,
         verbose: verbose
     };

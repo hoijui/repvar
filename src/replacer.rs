@@ -35,7 +35,7 @@ enum ReplState {
 
 #[derive(TypedBuilder)]
 pub struct Settings<S: ::std::hash::BuildHasher> {
-    vars: Box<HashMap<String, String, S>>,
+    vars: HashMap<String, String, S>,
     #[builder(default = false)]
     fail_on_missing: bool,
     #[builder(default = false)]
@@ -56,8 +56,8 @@ pub struct Settings<S: ::std::hash::BuildHasher> {
 /// let mut vars = HashMap::new();
 /// // TODO This fails due to some stupid bug(-like thing) regarding Settings not found in this testing environment, even though it is found 2 lines further down
 /// //settings! {vars: Box::new(vars)};
-/// // expands to:
-/// Settings::builder().vars(Box::new(vars)).build();
+/// # // expands to:
+/// Settings::builder().vars(vars).build();
 /// ```
 #[macro_export]
 macro_rules! settings{
@@ -86,7 +86,7 @@ macro_rules! settings{
 /// let input = "a ${key_a} $${key_a} b ${key_b} c";
 /// let expected = "a 1 ${key_a} b 2 c";
 /// let actual =
-///     replace_in_string(input, &Settings::builder().vars(Box::new(vars)).build()).unwrap();
+///     replace_in_string(input, &Settings::builder().vars(vars).build()).unwrap();
 /// assert_eq!(expected, actual);
 /// ```
 ///
@@ -190,7 +190,7 @@ pub fn replace_in_stream<S: ::std::hash::BuildHasher>(
 ) -> io::Result<()> {
     if settings.verbose {
         println!();
-        for (key, value) in &*settings.vars {
+        for (key, value) in &settings.vars {
             println!("VARIABLE: {}={}", key, value);
         }
         println!();
@@ -248,7 +248,7 @@ mod tests {
         let vars = HashMap::new();
         let input = "a ${key_a} $${key_a} b ${key_b} c";
         let expected = "a ${key_a} ${key_a} b ${key_b} c";
-        let actual = replace_in_string(input, &settings! {vars: Box::new(vars)}).unwrap();
+        let actual = replace_in_string(input, &settings! {vars: vars}).unwrap();
         assert_eq!(expected, actual);
     }
 
@@ -258,7 +258,7 @@ mod tests {
         vars.insert("key_a".to_string(), "1".to_string());
         let input = "a ${key_a} $${key_a} b ${key_b} c";
         let expected = "a 1 ${key_a} b ${key_b} c";
-        let actual = replace_in_string(input, &settings! {vars: Box::new(vars)}).unwrap();
+        let actual = replace_in_string(input, &settings! {vars: vars}).unwrap();
         assert_eq!(expected, actual);
     }
 
@@ -269,7 +269,7 @@ mod tests {
         vars.insert("key_b".to_string(), "2".to_string());
         let input = "a ${key_a} $${key_a} b ${key_b} c";
         let expected = "a 1 ${key_a} b 2 c";
-        let actual = replace_in_string(input, &settings! {vars: Box::new(vars)}).unwrap();
+        let actual = replace_in_string(input, &settings! {vars: vars}).unwrap();
         assert_eq!(expected, actual);
     }
 
@@ -280,7 +280,7 @@ mod tests {
         vars.insert("key_b".to_string(), "2".to_string());
         let input = "a ${key_a} $${key_a} b ${key_b} c";
         let expected = "a ${key_a} ${key_a} b 2 c";
-        let actual = replace_in_string(input, &settings! {vars: Box::new(vars)}).unwrap();
+        let actual = replace_in_string(input, &settings! {vars: vars}).unwrap();
         assert_eq!(expected, actual);
     }
 
@@ -290,7 +290,7 @@ mod tests {
         vars.insert("key_a".to_string(), "1".to_string());
         let input = "a ${key_a";
         let expected = "a ${key_a";
-        let actual = replace_in_string(input, &settings! {vars: Box::new(vars)}).unwrap();
+        let actual = replace_in_string(input, &settings! {vars: vars}).unwrap();
         assert_eq!(expected, actual);
     }
 
@@ -300,7 +300,7 @@ mod tests {
         vars.insert("key_a".to_string(), "1".to_string());
         let input = "a ${";
         let expected = "a ${";
-        let actual = replace_in_string(input, &settings! {vars: Box::new(vars)}).unwrap();
+        let actual = replace_in_string(input, &settings! {vars: vars}).unwrap();
         assert_eq!(expected, actual);
     }
 
@@ -310,7 +310,7 @@ mod tests {
         vars.insert("key_a".to_string(), "1".to_string());
         let input = "a $${key_a";
         let expected = "a ${key_a"; // NOTE Do we really want it this way, or should there still be two $$? this way is easy to implement, the other way seems more correct
-        let actual = replace_in_string(input, &settings! {vars: Box::new(vars)}).unwrap();
+        let actual = replace_in_string(input, &settings! {vars: vars}).unwrap();
         assert_eq!(expected, actual);
     }
     #[test]
@@ -318,7 +318,7 @@ mod tests {
         let vars = HashMap::new();
         let input = "a $${";
         let expected = "a ${"; // NOTE Do we really want it this way, or should there still be two $$? this way is easy to implement, the other way seems more correct
-        let actual = replace_in_string(input, &settings! {vars: Box::new(vars)}).unwrap();
+        let actual = replace_in_string(input, &settings! {vars: vars}).unwrap();
         assert_eq!(expected, actual);
     }
 }
