@@ -2,7 +2,7 @@
 //
 // SPDX-License-Identifier: GPL-3.0-or-later
 
-use clap::{app_from_crate, App, Arg};
+use clap::{app_from_crate, App, Arg, ValueHint};
 use std::collections::HashMap;
 
 mod key_value;
@@ -16,6 +16,8 @@ const A_S_OUTPUT: char = 'o';
 const A_L_OUTPUT: &str = "output";
 const A_S_VARIABLE: char = 'D';
 const A_L_VARIABLE: &str = "variable";
+const A_S_VARIABLES_FILE: char = 'I';
+const A_L_VARIABLES_FILE: &str = "variables-file";
 const A_S_ENVIRONMENT: char = 'e';
 const A_L_ENVIRONMENT: &str = "env";
 const A_S_VERBOSE: char = 'v';
@@ -52,6 +54,19 @@ fn create_app() -> App<'static> {
                 .takes_value(true)
                 .short(A_S_VARIABLE)
                 .long(A_L_VARIABLE)
+                .multiple_occurrences(true)
+                .required(false)
+        )
+        .arg(
+            Arg::new(A_L_VARIABLES_FILE)
+                .help("An input file containing KEY=VALUE pairs")
+                .long_help("An input file containing KEY=VALUE pairs, one per line (BASH style). Empty lines, and those starting with \"#\" or \"//\" are ignored. See -D,--variable for specifying one pair at a time.")
+                .takes_value(true)
+                .forbid_empty_values(true)
+                .value_name("FILE")
+                .value_hint(ValueHint::FilePath)
+                .short(A_S_VARIABLES_FILE)
+                .long(A_L_VARIABLES_FILE)
                 .multiple_occurrences(true)
                 .required(false)
         )
@@ -94,6 +109,13 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
     // enlist environment variables
     if args.is_present(A_L_ENVIRONMENT) {
         tools::append_env(&mut vars);
+    }
+    // enlist variables from files
+    if let Some(var_files) = args.values_of(A_L_VARIABLES_FILE) {
+        for var_file in var_files {
+            let mut reader = tools::create_input_reader(Some(var_file))?;
+            vars.extend(key_value::parse_vars_file_reader(&mut reader)?);
+        }
     }
     // enlist variables provided on the CLI
     if let Some(variables) = args.values_of(A_L_VARIABLE) {
