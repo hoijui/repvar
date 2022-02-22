@@ -4,7 +4,6 @@
 
 use clap::{app_from_crate, App, Arg};
 use std::collections::HashMap;
-use std::io::Result;
 
 mod key_value;
 mod tools;
@@ -85,7 +84,7 @@ fn create_app() -> App<'static> {
         )
 }
 
-fn main() -> Result<()> {
+fn main() -> Result<(), Box<dyn std::error::Error>> {
     let args = create_app().get_matches();
 
     let verbose: bool = args.is_present(A_L_VERBOSE);
@@ -96,14 +95,11 @@ fn main() -> Result<()> {
     if args.is_present(A_L_ENVIRONMENT) {
         tools::append_env(&mut vars);
     }
-
     // enlist variables provided on the CLI
-    if args.occurrences_of(A_L_VARIABLE) > 0 {
-        for kvp in args
-            .values_of_t::<key_value::Pair>(A_L_VARIABLE)
-            .unwrap_or_else(|e| e.exit())
-        {
-            vars.insert(kvp.key, kvp.value);
+    if let Some(variables) = args.values_of(A_L_VARIABLE) {
+        for key_value in variables {
+            let pair = key_value::Pair::parse(key_value)?;
+            vars.insert(pair.key.to_owned(), pair.value.to_owned());
         }
     }
 

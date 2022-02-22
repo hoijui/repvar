@@ -20,6 +20,7 @@ edition = "2021"
 [dependencies]
 clap = { version = "3.0.0-rc.4", features = ["cargo"] }
 regex = "1"
+thiserror = "1"
 typed-builder = "0.10"
 
 [dev-dependencies]
