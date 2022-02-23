@@ -74,6 +74,86 @@ macro_rules! settings {
 #[allow(unused_imports)]
 pub(crate) use settings;
 
+/// Extracts all occurences of variables of the form `${KEY}` in a string
+/// in the order and amount they appear in the input.
+///
+/// ```rust
+/// # use repvar::replacer::extract_from_string;
+/// let input = "a ${key_a} $${key_a} b ${key_b} c d ${key_a}e";
+/// let expected = vec!("key_a", "key_b", "key_a");
+/// let actual = extract_from_string(input);
+/// assert_eq!(expected, actual);
+/// ```
+#[must_use]
+pub fn extract_from_string(input: &'_ str) -> Vec<&'_ str> {
+    let mut state = ReplState::Text;
+    let mut key_start = 0;
+    let mut keys = vec![];
+    for (idx, chr) in input.chars().enumerate() {
+        match state {
+            ReplState::Text => {
+                if chr == '$' {
+                    state = ReplState::Dollar1;
+                }
+            }
+            ReplState::Dollar1 => {
+                if chr == '$' {
+                    state = ReplState::Dollar2;
+                } else if chr == '{' {
+                    state = ReplState::Key;
+                    key_start = idx + 1;
+                } else {
+                    state = ReplState::Text;
+                }
+            }
+            ReplState::Dollar2 => {
+                if chr != '$' {
+                    state = ReplState::Text;
+                }
+            }
+            ReplState::Key => {
+                if chr == '}' {
+                    keys.push(&input[key_start..idx]);
+                    state = ReplState::Text;
+                }
+            }
+        }
+    }
+
+    keys
+}
+
+/// Extracts all occurences of variables of the form `${KEY}` in a stream
+/// in the order and amount they appear in the input.
+///
+/// # Errors
+///
+/// If reading from the `reader` failed.
+pub fn extract_from_stream(reader: &mut impl BufRead) -> io::Result<Vec<String>> {
+    let mut keys = vec![];
+
+    for line in crate::tools::lines_iterator(reader) {
+        extract_from_string(&line?)
+            .into_iter()
+            .map(str::to_owned)
+            .for_each(|key| keys.push(key));
+    }
+
+    Ok(keys)
+}
+
+/// Extracts all occurences of variables of the form `${KEY}` in a file
+/// in the order and amount they appear in the input.
+///
+/// # Errors
+///
+/// If reading from the `source` failed.
+pub fn extract_from_file(source: Option<&str>) -> io::Result<Vec<String>> {
+    let mut reader = crate::tools::create_input_reader(source)?;
+
+    extract_from_stream(&mut reader)
+}
+
 /// Replaces all occurences of variables of the form `${KEY}` in a string
 /// with their respective values.
 ///
