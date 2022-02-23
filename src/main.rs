@@ -22,6 +22,8 @@ const A_S_ENVIRONMENT: char = 'e';
 const A_L_ENVIRONMENT: &str = "env";
 const A_S_VERBOSE: char = 'v';
 const A_L_VERBOSE: &str = "verbose";
+const A_S_LIST: char = 'l';
+const A_L_LIST: &str = "list";
 const A_S_FAIL_ON_MISSING_VALUES: char = 'f';
 const A_L_FAIL_ON_MISSING_VALUES: &str = "fail-on-missing-values";
 
@@ -92,6 +94,22 @@ fn create_app() -> App<'static> {
                 .required(false)
         )
         .arg(
+            Arg::new(A_L_LIST)
+                .help("Only list the variables found in the input text, and exit")
+                .long_help(
+                    "Only list the variables found in the input text in the output, \
+                    instead of the input text with the variables replaces. \
+                    The variables will appear in the output in the same order as in the input, \
+                    one per line, \
+                    and as many time as they appear in the input; \
+                    i.e. there will be duplicates.")
+                .takes_value(false)
+                .short(A_S_LIST)
+                .long(A_L_LIST)
+                .multiple_occurrences(false)
+                .required(false)
+        )
+        .arg(
             Arg::new(A_L_FAIL_ON_MISSING_VALUES)
                 .help("fail if no value is available for a variable key found in the input text")
                 .takes_value(false)
@@ -105,41 +123,46 @@ fn create_app() -> App<'static> {
 fn main() -> Result<(), Box<dyn std::error::Error>> {
     let args = create_app().get_matches();
 
-    let verbose: bool = args.is_present(A_L_VERBOSE);
-
-    let mut vars = HashMap::new();
-
-    // enlist environment variables
-    if args.is_present(A_L_ENVIRONMENT) {
-        tools::append_env(&mut vars);
-    }
-    // enlist variables from files
-    if let Some(var_files) = args.values_of(A_L_VARIABLES_FILE) {
-        for var_file in var_files {
-            let mut reader = tools::create_input_reader(Some(var_file))?;
-            vars.extend(key_value::parse_vars_file_reader(&mut reader)?);
-        }
-    }
-    // enlist variables provided on the CLI
-    if let Some(variables) = args.values_of(A_L_VARIABLE) {
-        for key_value in variables {
-            let pair = key_value::Pair::parse(key_value)?;
-            vars.insert(pair.key.to_owned(), pair.value.to_owned());
-        }
-    }
-
-    let fail_on_missing: bool = args.is_present(A_L_FAIL_ON_MISSING_VALUES);
-
-    let settings = settings! {
-        vars: vars,
-        fail_on_missing: fail_on_missing,
-        verbose: verbose
-    };
-
+    let verbose = args.is_present(A_L_VERBOSE);
+    let list = args.is_present(A_L_LIST);
     let src = args.value_of(A_L_INPUT);
     let dst = args.value_of(A_L_OUTPUT);
 
-    replacer::replace_in_file(src, dst, &settings)?;
+    if list {
+        let detected_vars = replacer::extract_from_file(src)?;
+        tools::write_to_file(detected_vars, dst)?;
+    } else {
+        let mut vars = HashMap::new();
+
+        // enlist environment variables
+        if args.is_present(A_L_ENVIRONMENT) {
+            tools::append_env(&mut vars);
+        }
+        // enlist variables from files
+        if let Some(var_files) = args.values_of(A_L_VARIABLES_FILE) {
+            for var_file in var_files {
+                let mut reader = tools::create_input_reader(Some(var_file))?;
+                vars.extend(key_value::parse_vars_file_reader(&mut reader)?);
+            }
+        }
+        // enlist variables provided on the CLI
+        if let Some(variables) = args.values_of(A_L_VARIABLE) {
+            for key_value in variables {
+                let pair = key_value::Pair::parse(key_value)?;
+                vars.insert(pair.key.to_owned(), pair.value.to_owned());
+            }
+        }
+
+        let fail_on_missing: bool = args.is_present(A_L_FAIL_ON_MISSING_VALUES);
+
+        let settings = settings! {
+            vars: vars,
+            fail_on_missing: fail_on_missing,
+            verbose: verbose
+        };
+
+        replacer::replace_in_file(src, dst, &settings)?;
+    }
 
     Ok(())
 }
