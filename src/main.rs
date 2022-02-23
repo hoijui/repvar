@@ -2,13 +2,13 @@
 //
 // SPDX-License-Identifier: GPL-3.0-or-later
 
-use clap::{app_from_crate, App, Arg, ValueHint};
-use std::collections::HashMap;
-
 mod key_value;
-mod tools;
-#[macro_use]
 mod replacer;
+mod tools;
+
+use clap::{app_from_crate, App, Arg, ValueHint};
+use replacer::settings;
+use std::collections::HashMap;
 
 const A_S_INPUT: char = 'i';
 const A_L_INPUT: &str = "input";
