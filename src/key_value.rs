@@ -60,7 +60,7 @@ impl<'t> Pair<'t> {
 /// If there is a problem with reading the file.
 ///
 /// If any line has a bad form, missing key and/or value.
-/// See [Pair::parse] for more details.
+/// See [``Pair::parse``] for more details.
 pub fn parse_vars_file_reader(
     mut reader: impl BufRead,
 ) -> Result<HashMap<String, String>, Box<dyn std::error::Error>> {
