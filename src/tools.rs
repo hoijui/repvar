@@ -136,3 +136,19 @@ pub fn unquote(pot_quoted: &str) -> &str {
     }
     pot_quoted
 }
+
+/// Writes a list of strings to a file.
+///
+/// # Errors
+///
+/// If writing to `destination` failed.
+pub fn write_to_file(lines: Vec<String>, destination: Option<&str>) -> io::Result<()> {
+    let mut writer = crate::tools::create_output_writer(destination)?;
+
+    for line in lines {
+        writer.write_all(line.as_bytes())?;
+        writer.write_all("\n".as_bytes())?;
+    }
+
+    Ok(())
+}
