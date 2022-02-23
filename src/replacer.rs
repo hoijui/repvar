@@ -57,6 +57,7 @@ pub struct Settings<S: ::std::hash::BuildHasher> {
 /// # // expands to:
 /// Settings::builder().vars(vars).build();
 /// ```
+#[allow(unused_macros)]
 macro_rules! settings {
     // match-like arm for the macro
     ($($p:ident:$v:expr),*) => {
@@ -70,6 +71,7 @@ macro_rules! settings {
             .build()
     }
 }
+#[allow(unused_imports)]
 pub(crate) use settings;
 
 /// Replaces all occurences of variables of the form `${KEY}` in a string
