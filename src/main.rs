@@ -60,7 +60,10 @@ fn create_app() -> App<'static> {
         .arg(
             Arg::new(A_L_VARIABLES_FILE)
                 .help("An input file containing KEY=VALUE pairs")
-                .long_help("An input file containing KEY=VALUE pairs, one per line (BASH style). Empty lines, and those starting with \"#\" or \"//\" are ignored. See -D,--variable for specifying one pair at a time.")
+                .long_help(
+                    "An input file containing KEY=VALUE pairs, one per line (BASH style). \
+                    Empty lines, and those starting with \"#\" or \"//\" are ignored. \
+                    See -D,--variable for specifying one pair at a time.")
                 .takes_value(true)
                 .forbid_empty_values(true)
                 .value_name("FILE")
