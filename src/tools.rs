@@ -99,6 +99,66 @@ pub fn lines_iterator(
     })
 }
 
+/// Returns the quoting character,
+/// if the supplied string starts with one,
+/// else returns `None`.
+///
+/// ```
+/// # use repvar::tools::get_start_quote;
+/// assert_eq!(get_start_quote(r#""Hello World""#), Some('"'));
+/// assert_eq!(get_start_quote(r#" "Hello World" "#), None);
+/// assert_eq!(get_start_quote(r#" "Hello World""#), None);
+/// assert_eq!(get_start_quote(r#""Hello World" "#), Some('"'));
+/// assert_eq!(get_start_quote(r#""Hello World"#), Some('"'));
+/// assert_eq!(get_start_quote(r#"Hello World""#), None);
+/// assert_eq!(get_start_quote(r#"'Hello World'"#), Some('\''));
+/// assert_eq!(get_start_quote(r#" 'Hello World' "#), None);
+/// assert_eq!(get_start_quote(r#" 'Hello World'"#), None);
+/// assert_eq!(get_start_quote(r#"'Hello World' "#), Some('\''));
+/// assert_eq!(get_start_quote(r#"'Hello World"#), Some('\''));
+/// assert_eq!(get_start_quote(r#"Hello World'"#), None);
+/// assert_eq!(get_start_quote(r#"Hello World"#), None);
+/// ```
+#[must_use]
+pub fn get_start_quote(pot_quoted: &str) -> Option<char> {
+    if let Some(first) = pot_quoted.chars().next() {
+        if first == '"' || first == '\'' {
+            return Some(first);
+        }
+    }
+    None
+}
+
+/// Returns the quoting character,
+/// if the supplied string ends with one,
+/// else returns `None`.
+///
+/// ```
+/// # use repvar::tools::get_end_quote;
+/// assert_eq!(get_end_quote(r#""Hello World""#), Some('"'));
+/// assert_eq!(get_end_quote(r#" "Hello World" "#), None);
+/// assert_eq!(get_end_quote(r#" "Hello World""#), Some('"'));
+/// assert_eq!(get_end_quote(r#""Hello World" "#), None);
+/// assert_eq!(get_end_quote(r#""Hello World"#), None);
+/// assert_eq!(get_end_quote(r#"Hello World""#), Some('"'));
+/// assert_eq!(get_end_quote(r#"'Hello World'"#), Some('\''));
+/// assert_eq!(get_end_quote(r#" 'Hello World' "#), None);
+/// assert_eq!(get_end_quote(r#" 'Hello World'"#), Some('\''));
+/// assert_eq!(get_end_quote(r#"'Hello World' "#), None);
+/// assert_eq!(get_end_quote(r#"'Hello World"#), None);
+/// assert_eq!(get_end_quote(r#"Hello World'"#), Some('\''));
+/// assert_eq!(get_end_quote(r#"Hello World"#), None);
+/// ```
+#[must_use]
+pub fn get_end_quote(pot_quoted: &str) -> Option<char> {
+    if let Some(last) = pot_quoted.chars().last() {
+        if last == '"' || last == '\'' {
+            return Some(last);
+        }
+    }
+    None
+}
+
 /// Returns an unquoted version of the input string,
 /// or the input string its self,
 /// if it was not quoted in the first place.
@@ -118,19 +178,18 @@ pub fn lines_iterator(
 /// assert_eq!(unquote(r#"'Hello World"#), r#"'Hello World"#);
 /// assert_eq!(unquote(r#"Hello World'"#), r#"Hello World'"#);
 /// assert_eq!(unquote(r#"Hello World"#), r#"Hello World"#);
+/// assert_eq!(unquote(r#""Hello World'"#), r#""Hello World'"#);
+/// assert_eq!(unquote(r#"'Hello World""#), r#"'Hello World""#);
 /// ```
 #[must_use]
 pub fn unquote(pot_quoted: &str) -> &str {
     let len = pot_quoted.len();
     if len > 1 {
-        let mut chars = pot_quoted.chars();
-        if let Some(first_char) = chars.next() {
-            if let Some(last_char) = chars.last() {
-                if (first_char == '"' && last_char == '"')
-                    || (first_char == '\'' && last_char == '\'')
-                {
-                    return &pot_quoted[1..len - 1];
-                }
+        if let (Some(start_q), Some(end_q)) =
+            (get_start_quote(pot_quoted), get_end_quote(pot_quoted))
+        {
+            if start_q == end_q {
+                return &pot_quoted[1..len - 1];
             }
         }
     }
