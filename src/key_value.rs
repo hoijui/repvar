@@ -10,8 +10,6 @@ use thiserror::Error;
 
 use clap::lazy_static::lazy_static;
 
-use crate::tools;
-
 #[derive(Error, Debug)]
 #[error("Failed to parse key-value pair; it has to be of the form 'key=value', but was '{input}'")]
 pub struct ParseError {
@@ -54,6 +52,11 @@ impl<'t> Pair<'t> {
 
 /// Parses a file containing lines string with of the form "KEY=VALUE".
 /// Empty lines and those starting with either "#" or "//" are ignored.
+/// Values may be quoted: `KEY="VALUE"` or `KEY='VALUE'`.
+/// Multi-line values are possible too; they require quotes:
+/// `KEY="A value made up
+/// of
+/// multiple lines"`
 ///
 /// # Errors
 ///
@@ -62,22 +65,13 @@ impl<'t> Pair<'t> {
 /// If any line has a bad form, missing key and/or value.
 /// See [``Pair::parse``] for more details.
 pub fn parse_vars_file_reader(
-    mut reader: impl BufRead,
+    reader: impl BufRead,
 ) -> Result<HashMap<String, String>, Box<dyn std::error::Error>> {
     lazy_static! {
         // Ignore empty lines and those starting with '#' or "//"
         static ref R_IGNORE_LINE: Regex = Regex::new(r"^($|#|//)").unwrap();
     }
-    let mut vars = HashMap::<String, String>::new();
-
-    for line in tools::lines_iterator(&mut reader) {
-        let line = line?;
-        let line = line.trim();
-        if !R_IGNORE_LINE.is_match(line) {
-            let pair = Pair::parse(line)?;
-            let value = tools::unquote(pair.value);
-            vars.insert(pair.key.to_owned(), value.to_owned());
-        }
-    }
-    Ok(vars)
+    let iter = dotenv::iter::Iter::new(reader);
+    let vars: Result<HashMap<_, _>, _> = iter.into_iter().collect();
+    Ok(vars?)
 }

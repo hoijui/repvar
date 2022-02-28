@@ -94,6 +94,11 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "fea41bba32d969b513997752735605054bc0dfa92b4c56bf1189f2e174be7a10"
 
 [[package]]
+name = "dotenv"
+version = "0.15.0"
+source = "git+https://github.com/hoijui/dotenv.git#0427177055ddd3bce709c6beeba5d79041297daa"
+
+[[package]]
 name = "either"
 version = "1.6.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -336,6 +341,7 @@ version = "0.4.0"
 dependencies = [
  "assert_cmd",
  "clap",
+ "dotenv",
  "predicates",
  "regex",
  "tempfile",

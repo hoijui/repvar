@@ -19,6 +19,12 @@ edition = "2021"
 
 [dependencies]
 clap = { version = "3.0.0-rc.4", features = ["cargo"] }
+# We can not yet use `dotenv` upstream, as long as this PR is unmerged:
+# https://github.com/dotenv-rs/dotenv/pull/78
+# Sadly, the project loks head-less (no active owners/maintainers),
+# see this related issue:
+# https://github.com/dotenv-rs/dotenv/issues/74
+dotenv = { git = "https://github.com/hoijui/dotenv.git" }
 regex = "1"
 thiserror = "1"
 typed-builder = "0.10"
