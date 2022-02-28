@@ -50,7 +50,7 @@ impl<'t> Pair<'t> {
     }
 }
 
-/// Parses a file containing lines string with of the form "KEY=VALUE".
+/// Parses a file containing lines of the form `KEY=VALUE`.
 /// Empty lines and those starting with either "#" or "//" are ignored.
 /// Values may be quoted: `KEY="VALUE"` or `KEY='VALUE'`.
 /// Multi-line values are possible too; they require quotes:
