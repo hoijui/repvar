@@ -18,7 +18,7 @@ categories = ["command-line-utilities", "text-processing"]
 edition = "2021"
 
 [dependencies]
-clap = { version = "3.0.0-rc.4", features = ["cargo"] }
+clap = { version = "3.1", features = ["cargo"] }
 # We can not yet use `dotenv` upstream, as long as this PR is unmerged:
 # https://github.com/dotenv-rs/dotenv/pull/78
 # Sadly, the project loks head-less (no active owners/maintainers),
