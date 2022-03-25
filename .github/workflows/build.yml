@@ -11,6 +11,7 @@ on:
       - 'src/**'
       - 'Cargo.toml'
       - 'Cargo.lock'
+      - 'scripts/build'
       - '.github/workflows/build.yml'
   release:
     types: [ published ]
