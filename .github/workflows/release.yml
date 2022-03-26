@@ -72,7 +72,7 @@ jobs:
       # systems.
       CARGO: cargo
       # When CARGO is set to CROSS, this is set to `--target matrix.target`.
-      TARGET_FLAGS: ""
+      TARGET_FLAG: ""
       # When CARGO is set to CROSS, TARGET_DIR includes matrix.target.
       # TARGET_DIR: ./target
       # Emit backtraces on panics.
@@ -123,11 +123,11 @@ jobs:
       if: env.OUR_VERSION == ''
       run: scripts/env
 
-    - name: Install packages (Ubuntu)
-      if: matrix.os == 'ubuntu-18.04'
-      run: |
-        # ci/ubuntu-install-packages
-        scripts/install-dependencies-ubuntu
+    #- name: Install packages (Ubuntu)
+    #  if: matrix.os == 'ubuntu-18.04'
+    #  run: |
+    #    # ci/ubuntu-install-packages
+    #    scripts/install_deps_ubuntu
 
     # - name: Install packages (macOS)
     #   if: matrix.os == 'macos-latest'
@@ -147,13 +147,13 @@ jobs:
     #   run: |
     #     cargo install cross
     #     echo "CARGO=cross" >> $GITHUB_ENV
-    #     echo "TARGET_FLAGS=--target ${{ matrix.target }}" >> $GITHUB_ENV
+    #     echo "TARGET_FLAG=--target ${{ matrix.target }}" >> $GITHUB_ENV
     #     echo "TARGET_DIR=./target/${{ matrix.target }}" >> $GITHUB_ENV
 
     - name: Show command used for Cargo
       run: |
         echo "cargo command is: ${{ env.CARGO }}"
-        echo "target flag is: ${{ env.TARGET_FLAGS }}"
+        echo "target flag is: ${{ matrix.target }}"
         echo "target dir is: ${{ env.TARGET_DIR }}"
 
     - name: Build and strip release binary
@@ -178,7 +178,7 @@ jobs:
         # export NAME="${{ env.NAME }}"
         # export BINARY="${{ env.BINARY }}"
         # export VERSION="${{ needs.create-release.outputs.our_version }}"
-        # export TARGET="${{ matrix.target }}"
+        # export TARGET_FLAG="${{ matrix.target }}"
         # export OS="${{ matrix.os }}"
         # export GITHUB_ENV="$GITHUB_ENV"
         scripts/package
