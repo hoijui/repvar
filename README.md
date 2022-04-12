@@ -1,14 +1,14 @@
 <!--
-SPDX-FileCopyrightText: 2021 Robin Vobruba <hoijui.quaero@gmail.com>
+SPDX-FileCopyrightText: 2021-2022 Robin Vobruba <hoijui.quaero@gmail.com>
 
 SPDX-License-Identifier: CC0-1.0
 -->
 
-# `repvar` - Variable replacing UNIX-style text filter
+# `repvar` - Variable replacing, UNIX-style text filter
 
-[![License: GPL-3.0-or-later](
-    https://img.shields.io/badge/License-GPL%203.0+-blue.svg)](
-    https://www.gnu.org/licenses/gpl-3.0.html)
+[![License: AGPL-3.0-or-later](
+    https://img.shields.io/badge/License-AGPL%203.0+-blue.svg)](
+    https://www.gnu.org/licenses/agpl-3.0.html)
 [![REUSE status](
     https://api.reuse.software/badge/github.com/hoijui/repvar)](
     https://api.reuse.software/info/github.com/hoijui/repvar)
@@ -31,7 +31,7 @@ It can also be used as a rust library.
 
 For the CLI tool,
 the variables can be read from the environment
-or be directly supplied through CLI switches
+or be directly supplied through CLI switches,
 like `-Dkey=value`.
 
 > **NOTE** \
@@ -43,16 +43,16 @@ like `-Dkey=value`.
 
 ## Usage
 
-A Simplisitc example:
+### Simplisitc
 
 ```bash
-$ export VAR_A="replacement"   # setting an env.-variable
-$ echo 'Text ${VAR}.' \        # input text
-    | repvar --env             # filtering with `repvar`
+$ export KEY_A="replacement"   # setting an env.-variable
+$ echo 'Text ${KEY_A}.' \        # input text
+    | repvar --env             # replacing variables
 Text replacement.              # output
 ```
 
-A slightly more elaborate example:
+### Slightly more elaborate
 
 ```bash
 $ export first="the environment"
@@ -70,13 +70,17 @@ repvars --help
 ## Building
 
 ```bash
+# To get a binary for your system
 cargo build --release
+
+# To get a 64bit binary that is portabel to all Linux systems
+scripts/build
 ```
 
 ## Testing
 
-To run the unit-tests:
+To run unit-, doc- and integration-tests:
 
 ```bash
-cargo test
+scripts/test
 ```
