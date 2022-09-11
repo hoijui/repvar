@@ -54,17 +54,19 @@ pub struct Settings<S: ::std::hash::BuildHasher> {
 /// # use std::collections::HashMap;
 /// let mut vars = HashMap::new();
 /// settings! {vars: vars};
-/// # // expands to:
+/// // expands to:
+/// # let mut vars = HashMap::new();
 /// Settings::builder().vars(vars).build();
 /// ```
 #[allow(unused_macros)]
+#[macro_export]
 macro_rules! settings {
     // match-like arm for the macro
     ($($p:ident:$v:expr),*) => {
         // the macro expands to this code
 
         // This is always there
-        crate::replacer::Settings::builder()
+        Settings::builder()
             // This appears as many times as there are arguments
             $(.$p($v))*
             // This too is always there
@@ -72,7 +74,7 @@ macro_rules! settings {
     }
 }
 #[allow(unused_imports)]
-pub(crate) use settings;
+pub use settings;
 
 /// Extracts all occurences of variables of the form `${KEY}` in a string
 /// in the order and amount they appear in the input.

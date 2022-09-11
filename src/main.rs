@@ -7,7 +7,7 @@ mod replacer;
 mod tools;
 
 use clap::{app_from_crate, App, Arg, ValueHint};
-use replacer::settings;
+use replacer::Settings;
 use std::collections::HashMap;
 
 const A_S_INPUT: char = 'i';
