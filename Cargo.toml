@@ -25,11 +25,11 @@ clap = { version = "3.1", features = ["cargo"] }
 # see this related issue:
 # https://github.com/dotenv-rs/dotenv/issues/74
 dotenv = { git = "https://github.com/hoijui/dotenv.git" }
-regex = "1"
-thiserror = "1"
+regex = "1.6"
+thiserror = "1.0"
 typed-builder = "0.10"
 
 [dev-dependencies]
 assert_cmd = "2.0"
-predicates = "2.0"
-tempfile = "3"
+predicates = "2.1"
+tempfile = "3.3"
