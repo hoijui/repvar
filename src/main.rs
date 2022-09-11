@@ -29,7 +29,9 @@ const A_L_FAIL_ON_MISSING_VALUES: &str = "fail-on-missing-values";
 
 fn create_app() -> App<'static> {
     app_from_crate!()
-        .about("Given some text as input, replaces variables of the type `${KEY}` with a respective value.")
+        .about(
+            "Given some text as input, \
+            replaces variables of the type `${KEY}` with a respective value.")
         .arg(
             Arg::new(A_L_INPUT)
                 .help("the input text file to use; '-' for stdin")
@@ -98,7 +100,7 @@ fn create_app() -> App<'static> {
                 .help("Only list the variables found in the input text, and exit")
                 .long_help(
                     "Only list the variables found in the input text in the output, \
-                    instead of the input text with the variables replaces. \
+                    instead of the input text with the variables replaced. \
                     The variables will appear in the output in the same order as in the input, \
                     one per line, \
                     and as many time as they appear in the input; \
