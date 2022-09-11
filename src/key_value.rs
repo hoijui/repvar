@@ -8,7 +8,7 @@ use std::fmt;
 use std::io::BufRead;
 use thiserror::Error;
 
-use clap::lazy_static::lazy_static;
+use lazy_static::lazy_static;
 
 #[derive(Error, Debug)]
 #[error("Failed to parse key-value pair; it has to be of the form 'key=value', but was '{input}'")]
