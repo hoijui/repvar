@@ -206,7 +206,7 @@ pub fn write_to_file(lines: Vec<String>, destination: Option<&str>) -> io::Resul
 
     for line in lines {
         writer.write_all(line.as_bytes())?;
-        writer.write_all("\n".as_bytes())?;
+        writer.write_all(b"\n")?;
     }
 
     Ok(())

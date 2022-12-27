@@ -17,8 +17,8 @@ pub struct ParseError {
 }
 
 impl ParseError {
-    fn new(input: &str) -> ParseError {
-        ParseError {
+    fn new(input: &str) -> Self {
+        Self {
             input: input.to_string(),
         }
     }
