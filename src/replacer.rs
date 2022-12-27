@@ -17,10 +17,10 @@ fn replacement<S: ::std::hash::BuildHasher>(
             if settings.fail_on_missing {
                 Err(io::Error::new(
                     io::ErrorKind::NotFound,
-                    format!("Undefined variable '{}'", key),
+                    format!("Undefined variable '{key}'"),
                 ))
             } else {
-                Ok((false, format!("${{{}}}", key)))
+                Ok((false, format!("${{{key}}}")))
             }
         }
     };
@@ -273,7 +273,7 @@ pub fn replace_in_stream<S: ::std::hash::BuildHasher>(
     if settings.verbose {
         println!();
         for (key, value) in &settings.vars {
-            println!("VARIABLE: {}={}", key, value);
+            println!("VARIABLE: {key}={value}");
         }
         println!();
     }

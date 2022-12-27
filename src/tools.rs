@@ -17,8 +17,8 @@ pub fn append_env<S: ::std::hash::BuildHasher>(vars: &mut HashMap<String, String
 #[allow(dead_code)] // This is an API function for lib.rs
 pub fn flush_to_env<'a>(vars: impl Iterator<Item = (&'a String, &'a String)>, overwrite: bool) {
     for (key, value) in vars {
-        if overwrite || env::var(&key).is_err() {
-            env::set_var(&key, &value);
+        if overwrite || env::var(key).is_err() {
+            env::set_var(key, value);
         }
     }
 }
@@ -64,7 +64,7 @@ pub fn create_output_writer(ident: Option<&str>) -> io::Result<Box<dyn Write>> {
         None | Some("-") => Ok(Box::new(io::stdout()) as Box<dyn Write>),
         Some(file) => {
             let path = Path::new(file);
-            let file = File::create(&path)?;
+            let file = File::create(path)?;
             Ok(Box::new(file) as Box<dyn Write>)
         }
     }
