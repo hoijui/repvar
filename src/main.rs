@@ -36,8 +36,24 @@ mod tools;
 use replacer::Settings;
 use std::collections::HashMap;
 
+fn print_version_and_exit(quiet: bool) {
+    #![allow(clippy::print_stdout)]
+
+    if !quiet {
+        print!("{} ", clap::crate_name!());
+    }
+    println!("{}", repvar::VERSION);
+    std::process::exit(0);
+}
+
 fn main() -> Result<(), Box<dyn std::error::Error>> {
     let args = cli::args_matcher().get_matches();
+
+    let quiet = args.get_flag(cli::A_L_QUIET);
+    let version = args.get_flag(cli::A_L_VERSION);
+    if version {
+        print_version_and_exit(quiet);
+    }
 
     let verbose = args.get_flag(cli::A_L_VERBOSE);
     let list = args.get_flag(cli::A_L_LIST);
