@@ -119,6 +119,8 @@ pub fn args_matcher() -> Command {
             "Given some text as input, \
             replaces variables of the type `${KEY}` with a respective value.",
         )
+        .bin_name(clap::crate_name!())
+        .help_expected(true)
         .arg(arg_input())
         .arg(arg_output())
         .arg(arg_variable())
