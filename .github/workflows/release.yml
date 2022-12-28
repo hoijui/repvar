@@ -35,7 +35,7 @@ jobs:
       our_version: ${{ env.OUR_VERSION }}
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
         if: env.OUR_VERSION == ''
         with:
           fetch-depth: 0
@@ -51,39 +51,28 @@ jobs:
 
       - name: Create GitHub release
         id: release
-        uses: actions/create-release@v1
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        uses: softprops/action-gh-release@v1
         with:
-          tag_name: ${{ env.OUR_VERSION }}
-          release_name: ${{ env.OUR_VERSION }}
+          name: ${{ env.OUR_VERSION }}
 
   build-release:
     name: build-release
     needs: ['create-release']
     runs-on: ${{ matrix.os }}
     env:
-      # NAME: repvar
-      # BINARY: "${{ NAME }}${{ startswith(matrix.build, 'win') && '.exe' || ''}}"
       TARGET: ${{ matrix.target }}
-      # BINARY_PATH: "target/${{ matrix.target }}/release/${{ BINARY }}"
       OS: ${{ matrix.os }}
       # For some builds, we use cross to test on 32-bit and big-endian
       # systems.
       CARGO: cargo
       # When CARGO is set to CROSS, this is set to `--target matrix.target`.
-      TARGET_FLAG: ""
-      # When CARGO is set to CROSS, TARGET_DIR includes matrix.target.
-      # TARGET_DIR: ./target
-      # Emit backtraces on panics.
-      # RUST_BACKTRACE: 1
     strategy:
       matrix:
         # build: [linux, linux-arm, macos, win-msvc, win-gnu, win32-msvc]
         build: [linux]
         include:
         - build: linux
-          os: ubuntu-18.04
+          os: ubuntu-20.04
           rust: nightly
           target: x86_64-unknown-linux-musl
         # - build: linux-arm
@@ -109,7 +98,7 @@ jobs:
 
     steps:
     - name: Checkout repository
-      uses: actions/checkout@v2
+      uses: actions/checkout@v3
       with:
         fetch-depth: 0
         submodules: true
@@ -123,11 +112,10 @@ jobs:
       if: env.OUR_VERSION == ''
       run: scripts/env
 
-    #- name: Install packages (Ubuntu)
-    #  if: matrix.os == 'ubuntu-18.04'
-    #  run: |
-    #    # ci/ubuntu-install-packages
-    #    scripts/install_deps_ubuntu
+    - name: Install packages (Ubuntu)
+      if: matrix.os == 'ubuntu-20.04'
+      run: |
+        scripts/install_deps_ubuntu
 
     # - name: Install packages (macOS)
     #   if: matrix.os == 'macos-latest'
@@ -135,11 +123,9 @@ jobs:
     #     ci/macos-install-packages
 
     - name: Install Rust
-      uses: actions-rs/toolchain@v1
+      uses: dtolnay/rust-toolchain@master
       with:
         toolchain: ${{ matrix.rust }}
-        profile: minimal
-        override: true
         target: ${{ matrix.target }}
 
     # - name: Use Cross
@@ -157,7 +143,7 @@ jobs:
         echo "target dir is: ${{ env.TARGET_DIR }}"
 
     - name: Build and strip release binary
-      run: scripts/build
+      run: scripts/build --skip-strip
 
     # - name: Strip release binary (linux and macos)
     #   if: matrix.build == 'linux' || matrix.build == 'macos'
@@ -175,12 +161,6 @@ jobs:
     - name: Build archive
       shell: bash
       run: |
-        # export NAME="${{ env.NAME }}"
-        # export BINARY="${{ env.BINARY }}"
-        # export VERSION="${{ needs.create-release.outputs.our_version }}"
-        # export TARGET_FLAG="${{ matrix.target }}"
-        # export OS="${{ matrix.os }}"
-        # export GITHUB_ENV="$GITHUB_ENV"
         scripts/package
 
     - name: Upload release archive
