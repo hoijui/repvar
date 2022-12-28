@@ -24,6 +24,27 @@ impl ParseError {
     }
 }
 
+/// Owned version of [`Pair`],
+/// used when importing this crate as a library,
+/// e.g. for parsing cli args into pairs with clap.
+#[derive(Clone)]
+pub struct PairBuf {
+    pub key: String,
+    pub value: String,
+}
+
+impl PairBuf {
+    /// Parses a "KEY=VALUE" string into its two parts.
+    ///
+    /// # Errors
+    ///
+    /// If the input string does not contain at least one '=',
+    /// and at least one char before and after it.
+    pub fn parse(key_value: &str) -> std::result::Result<Self, ParseError> {
+        Ok(Pair::parse(key_value)?.to_pair_buf())
+    }
+}
+
 pub struct Pair<'t> {
     pub key: &'t str,
     pub value: &'t str,
@@ -47,6 +68,14 @@ impl<'t> Pair<'t> {
         let key = splitter.next().ok_or_else(|| ParseError::new(key_value))?;
         let value = splitter.next().ok_or_else(|| ParseError::new(key_value))?;
         Ok(Pair { key, value })
+    }
+
+    #[must_use]
+    pub fn to_pair_buf(&self) -> PairBuf {
+        PairBuf {
+            key: self.key.to_owned(),
+            value: self.value.to_owned(),
+        }
     }
 }
 
