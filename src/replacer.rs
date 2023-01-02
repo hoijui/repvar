@@ -11,9 +11,8 @@ fn replacement<S: ::std::hash::BuildHasher>(
     key: &str,
     settings: &Settings<S>,
 ) -> io::Result<(bool, String)> {
-    return match settings.vars.get(key) {
-        Some(val) => Ok((true, val.to_string())),
-        None => {
+    return settings.vars.get(key).map_or_else(
+        || {
             if settings.fail_on_missing {
                 Err(io::Error::new(
                     io::ErrorKind::NotFound,
@@ -22,8 +21,9 @@ fn replacement<S: ::std::hash::BuildHasher>(
             } else {
                 Ok((false, format!("${{{key}}}")))
             }
-        }
-    };
+        },
+        |val| Ok((true, val.to_string())),
+    );
 }
 
 enum ReplState {
