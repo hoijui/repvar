@@ -19,6 +19,7 @@ edition = "2021"
 
 [dependencies]
 clap = { version = "4.0", features = ["cargo"] }
+cli-utils = { git = "https://github.com/hoijui/cli-utils-rs.git" }
 const_format = "0.2"
 # We can not yet use `dotenv` upstream, as long as this PR is unmerged:
 # https://github.com/dotenv-rs/dotenv/pull/78

@@ -84,6 +84,14 @@ dependencies = [
 ]
 
 [[package]]
+name = "cli-utils"
+version = "0.1.0"
+source = "git+https://github.com/hoijui/cli-utils-rs.git#da34bfc8b41d3a741f01f5a1307711a5e09a6d17"
+dependencies = [
+ "git-version",
+]
+
+[[package]]
 name = "const_format"
 version = "0.2.30"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -388,6 +396,7 @@ version = "0.9.0"
 dependencies = [
  "assert_cmd",
  "clap",
+ "cli-utils",
  "const_format",
  "dotenv",
  "git-version",

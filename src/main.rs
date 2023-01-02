@@ -73,7 +73,7 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
         // enlist variables from files
         if let Some(var_files) = args.get_many::<String>(cli::A_L_VARIABLES_FILE) {
             for var_file in var_files {
-                let mut reader = tools::create_input_reader(Some(var_file))?;
+                let mut reader = cli_utils::create_input_reader(Some(var_file))?;
                 vars.extend(key_value::parse_vars_file_reader(&mut reader)?);
             }
         }

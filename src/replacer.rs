@@ -134,7 +134,7 @@ pub fn extract_from_string(input: &'_ str) -> Vec<&'_ str> {
 pub fn extract_from_stream(reader: &mut impl BufRead) -> io::Result<Vec<String>> {
     let mut keys = vec![];
 
-    for line in crate::tools::lines_iterator(reader) {
+    for line in cli_utils::lines_iterator(reader) {
         extract_from_string(&line?)
             .into_iter()
             .map(str::to_owned)
@@ -151,7 +151,7 @@ pub fn extract_from_stream(reader: &mut impl BufRead) -> io::Result<Vec<String>>
 ///
 /// If reading from the `source` failed.
 pub fn extract_from_file(source: Option<&str>) -> io::Result<Vec<String>> {
-    let mut reader = crate::tools::create_input_reader(source)?;
+    let mut reader = cli_utils::create_input_reader(source)?;
 
     extract_from_stream(&mut reader)
 }
@@ -278,7 +278,7 @@ pub fn replace_in_stream<S: ::std::hash::BuildHasher>(
         println!();
     }
 
-    for line in crate::tools::lines_iterator(reader) {
+    for line in cli_utils::lines_iterator(reader) {
         writer.write_all(replace_in_string(&line?, settings)?.as_bytes())?;
     }
 
@@ -313,8 +313,8 @@ pub fn replace_in_file<S: ::std::hash::BuildHasher>(
         println!();
     }
 
-    let mut reader = crate::tools::create_input_reader(source)?;
-    let mut writer = crate::tools::create_output_writer(destination)?;
+    let mut reader = cli_utils::create_input_reader(source)?;
+    let mut writer = cli_utils::create_output_writer(destination)?;
 
     replace_in_stream(&mut reader, &mut writer, settings)
 }
