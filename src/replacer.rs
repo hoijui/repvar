@@ -134,7 +134,7 @@ pub fn extract_from_string(input: &'_ str) -> Vec<&'_ str> {
 pub fn extract_from_stream(reader: &mut impl BufRead) -> io::Result<Vec<String>> {
     let mut keys = vec![];
 
-    for line in cli_utils::lines_iterator(reader) {
+    for line in cli_utils::lines_iterator(reader, false) {
         extract_from_string(&line?)
             .into_iter()
             .map(str::to_owned)
@@ -278,7 +278,7 @@ pub fn replace_in_stream<S: ::std::hash::BuildHasher>(
         println!();
     }
 
-    for line in cli_utils::lines_iterator(reader) {
+    for line in cli_utils::lines_iterator(reader, false) {
         writer.write_all(replace_in_string(&line?, settings)?.as_bytes())?;
     }
 

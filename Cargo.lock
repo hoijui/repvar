@@ -85,8 +85,8 @@ dependencies = [
 
 [[package]]
 name = "cli-utils"
-version = "0.1.0"
-source = "git+https://github.com/hoijui/cli-utils-rs.git#da34bfc8b41d3a741f01f5a1307711a5e09a6d17"
+version = "0.2.0"
+source = "git+https://github.com/hoijui/cli-utils-rs.git#9e54442b75659f59a9b670fb1a27badeae181276"
 dependencies = [
  "git-version",
 ]
