@@ -2,7 +2,7 @@
 //
 // SPDX-License-Identifier: GPL-3.0-or-later
 
-use assert_cmd::{prelude::*, Command}; // Add methods on commands
+use assert_cmd::Command; // Add methods on commands
 use predicates::prelude::*; // Used for writing assertions
 use std::{
     collections::{hash_map::RandomState, HashMap},
