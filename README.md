@@ -1,5 +1,5 @@
 <!--
-SPDX-FileCopyrightText: 2021-2022 Robin Vobruba <hoijui.quaero@gmail.com>
+SPDX-FileCopyrightText: 2021-2023 Robin Vobruba <hoijui.quaero@gmail.com>
 
 SPDX-License-Identifier: CC0-1.0
 -->
@@ -24,6 +24,13 @@ SPDX-License-Identifier: CC0-1.0
 [![Build status](
     https://github.com/hoijui/repvar/workflows/build/badge.svg)](
     https://github.com/hoijui/repvar/actions)
+
+[![In cooperation with FabCity Hamburg](
+    https://custom-icon-badges.demolab.com/badge/-FCHH-dddddd.svg?logo=fc_logo)](
+    https://fabcity.hamburg)
+[![In cooperation with Open Source Ecology Germany](
+    https://custom-icon-badges.demolab.com/badge/-OSEG-555555.svg?logo=oseg_logo)](
+    https://opensourceecology.de)
 
 A tiny CLI tool that replaces variables of the style `${KEY}`
 in text with their respective value.
