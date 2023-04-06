@@ -133,8 +133,8 @@ checksum = "8a2dd5a6fe8c6e3502f568a6353e5273bbb15193ad9a89e457b9970798efbea1"
 
 [[package]]
 name = "cli-utils"
-version = "0.4.1"
-source = "git+https://github.com/hoijui/cli-utils-rs.git#a1ad1c70201a2b046719235a58a92e889c2019f6"
+version = "0.5.0"
+source = "git+https://github.com/hoijui/cli-utils-rs.git#daaaaa32968c1f1060972f3afd02d948171828c7"
 dependencies = [
  "git-version",
  "once_cell",
