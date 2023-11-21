@@ -38,8 +38,6 @@ pub struct Settings<S: ::std::hash::BuildHasher> {
     vars: HashMap<String, String, S>,
     #[builder(default = false)]
     fail_on_missing: bool,
-    #[builder(default = false)]
-    verbose: bool,
 }
 
 /// Settings builder macro.
@@ -270,12 +268,10 @@ pub fn replace_in_stream<S: ::std::hash::BuildHasher>(
     writer: &mut impl Write,
     settings: &Settings<S>,
 ) -> io::Result<()> {
-    if settings.verbose {
-        println!();
+    if log::log_enabled!(log::Level::Debug) {
         for (key, value) in &settings.vars {
-            println!("VARIABLE: {key}={value}");
+            log::debug!("VARIABLE: {key}={value}");
         }
-        println!();
     }
 
     for line in cli_utils::lines_iterator(reader, false) {
@@ -302,15 +298,13 @@ pub fn replace_in_file<S: ::std::hash::BuildHasher>(
     destination: Option<&str>,
     settings: &Settings<S>,
 ) -> io::Result<()> {
-    if settings.verbose {
-        println!();
+    if log::log_enabled!(log::Level::Debug) {
         if let Some(in_file) = source {
-            println!("INPUT: {}", &in_file);
+            log::debug!("INPUT: {}", &in_file);
         }
         if let Some(out_file) = destination {
-            println!("OUTPUT: {}", &out_file);
+            log::debug!("OUTPUT: {}", &out_file);
         }
-        println!();
     }
 
     let mut reader = cli_utils::create_input_reader(source)?;

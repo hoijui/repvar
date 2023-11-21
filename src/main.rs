@@ -56,6 +56,12 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
     }
 
     let verbose = args.get_flag(cli::A_L_VERBOSE);
+    let log_level = if verbose {
+        log::LevelFilter::Trace
+    } else {
+        log::LevelFilter::Info
+    };
+    env_logger::builder().filter_level(log_level).init();
     let list = args.get_flag(cli::A_L_LIST);
     let src = args.get_one::<String>(cli::A_L_INPUT).cloned();
     let dst = args.get_one::<String>(cli::A_L_OUTPUT).cloned();
@@ -89,8 +95,7 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
 
         let settings = settings! {
             vars: vars,
-            fail_on_missing: fail_on_missing,
-            verbose: verbose
+            fail_on_missing: fail_on_missing
         };
 
         replacer::replace_in_file(src.as_deref(), dst.as_deref(), &settings)?;
