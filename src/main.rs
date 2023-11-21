@@ -3,9 +3,10 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 
 mod cli;
-mod key_value;
-mod replacer;
-mod tools;
+use repvar::key_value;
+use repvar::replacer;
+use repvar::settings;
+use repvar::tools;
 
 use replacer::Settings;
 use std::collections::HashMap;
