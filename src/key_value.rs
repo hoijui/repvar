@@ -100,7 +100,7 @@ pub fn parse_vars_file_reader(
         // Ignore empty lines and those starting with '#' or "//"
         static ref R_IGNORE_LINE: Regex = Regex::new(r"^($|#|//)").unwrap();
     }
-    let iter = dotenv::iter::Iter::new(reader);
+    let iter = dotenvy::Iter::new(reader);
     let vars: Result<HashMap<_, _>, _> = iter.into_iter().collect();
     Ok(vars?)
 }

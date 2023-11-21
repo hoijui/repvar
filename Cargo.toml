@@ -21,12 +21,7 @@ edition = "2021"
 clap = { version = "4.0", features = ["cargo"] }
 cli-utils = { version = "0.5", git = "https://github.com/hoijui/cli-utils-rs.git" }
 const_format = "0.2"
-# We can not yet use `dotenv` upstream, as long as this PR is unmerged:
-# https://github.com/dotenv-rs/dotenv/pull/78
-# Sadly, the project looks head-less (no active owners/maintainers),
-# see this related issue:
-# https://github.com/dotenv-rs/dotenv/issues/74
-dotenv = { git = "https://github.com/hoijui/dotenv.git" }
+dotenvy = "0.15"
 git-version = "0.3"
 lazy_static = "1.4"
 regex = "1.6"
