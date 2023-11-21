@@ -403,4 +403,14 @@ mod tests {
         let actual = replace_in_string(input, &settings! {vars: vars}).unwrap();
         assert_eq!(expected, actual);
     }
+
+    #[test]
+    fn test_replace_in_string_with_var_with_dollar_value() {
+        let mut vars = HashMap::new();
+        vars.insert("key_a".to_string(), "1$2".to_string());
+        let input = "a ${key_a} $${key_a} b ${key_b} c";
+        let expected = "a 1$2 ${key_a} b ${key_b} c";
+        let actual = replace_in_string(input, &settings! {vars: vars}).unwrap();
+        assert_eq!(expected, actual);
+    }
 }
