@@ -36,6 +36,7 @@ mod tools;
 use replacer::Settings;
 use std::collections::HashMap;
 
+#[allow(clippy::print_stdout)]
 fn print_version_and_exit(quiet: bool) {
     #![allow(clippy::print_stdout)]
 
