@@ -125,7 +125,9 @@ pub fn unquote(pot_quoted: &str) -> &str {
             (get_start_quote(pot_quoted), get_end_quote(pot_quoted))
         {
             if start_q == end_q {
-                return &pot_quoted[1..len - 1];
+                if let Some(unquoted) = pot_quoted.get(1..len - 1) {
+                    return unquoted;
+                }
             }
         }
     }
