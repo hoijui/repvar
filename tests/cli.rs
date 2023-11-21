@@ -21,6 +21,15 @@ fn simple() -> Result<(), Box<dyn std::error::Error>> {
 }
 
 #[test]
+fn simple_with_dollar_val() -> Result<(), Box<dyn std::error::Error>> {
+    Tester::new(CMD)
+        .arg("-DKEY=value$1")
+        .stdin("This text contains a ${KEY} in its middle.")
+        .stdout("This text contains a value$1 in its middle.")
+        .run_test()
+}
+
+#[test]
 fn simple_space() -> Result<(), Box<dyn std::error::Error>> {
     Tester::new(CMD)
         .arg("-D")
