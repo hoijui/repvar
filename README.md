@@ -54,7 +54,7 @@ like `-Dkey=value`.
 
 ```bash
 $ export KEY_A="replacement"   # setting an env.-variable
-$ echo 'Text ${KEY_A}.' \        # input text
+$ echo 'Text ${KEY_A}.' \      # input text
     | repvar --env             # replacing variables
 Text replacement.              # output
 ```
