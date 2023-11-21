@@ -84,6 +84,10 @@ pub use settings;
 /// let actual = extract_from_string(input);
 /// assert_eq!(expected, actual);
 /// ```
+///
+/// # Panics
+///
+/// In the theoretically impossible case of invalid key-name indices.
 #[must_use]
 pub fn extract_from_string(input: &'_ str) -> Vec<&'_ str> {
     let mut state = ReplState::Text;
@@ -113,7 +117,7 @@ pub fn extract_from_string(input: &'_ str) -> Vec<&'_ str> {
             }
             ReplState::Key => {
                 if chr == '}' {
-                    keys.push(&input[key_start..idx]);
+                    keys.push(input.get(key_start..idx).expect("Bad indices for the name part; should be impossilbe due to the logic we use."));
                     state = ReplState::Text;
                 }
             }
