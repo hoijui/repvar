@@ -109,6 +109,94 @@ fn file_does_exist() -> Result<(), Box<dyn std::error::Error>> {
 }
 
 #[test]
+fn var_file_does_not_exist() -> Result<(), Box<dyn std::error::Error>> {
+    Tester::new(CMD)
+        .arg("--variables-file")
+        .arg("test/file/does/not/exist")
+        .stderr("No such file or directory")
+        .run_test()
+}
+
+#[test]
+fn var_file_does_not_exist_short() -> Result<(), Box<dyn std::error::Error>> {
+    Tester::new(CMD)
+        .arg("-I")
+        .arg("test/file/does/not/exist")
+        .stderr("No such file or directory")
+        .run_test()
+}
+
+#[test]
+fn var_file_does_exist() -> Result<(), Box<dyn std::error::Error>> {
+    let file = NamedTempFile::new()?;
+    write_to_file(file.path(), "KEY=value\n");
+    let file_path_string = file.path().as_os_str().to_str().ok_or("Non UTF-8 string")?;
+
+    Tester::new(CMD)
+        .arg("--variables-file")
+        .arg(file_path_string)
+        .stdin("This text contains a ${KEY} in its middle.\n")
+        .stdout("This text contains a value in its middle.\n")
+        .run_test()
+}
+
+#[test]
+fn var_file_no_newline() -> Result<(), Box<dyn std::error::Error>> {
+    let file = NamedTempFile::new()?;
+    write_to_file(file.path(), "KEY=value");
+    let file_path_string = file.path().as_os_str().to_str().ok_or("Non UTF-8 string")?;
+
+    Tester::new(CMD)
+        .arg("--variables-file")
+        .arg(file_path_string)
+        .stdin("This text contains a ${KEY} in its middle.\n")
+        .stdout("This text contains a value in its middle.\n")
+        .run_test()
+}
+
+#[test]
+fn var_file_multi_props() -> Result<(), Box<dyn std::error::Error>> {
+    let file = NamedTempFile::new()?;
+    write_to_file(file.path(), "KEY_1=value1\nKEY_2=value2\nKEY_3=value3\n");
+    let file_path_string = file.path().as_os_str().to_str().ok_or("Non UTF-8 string")?;
+
+    Tester::new(CMD)
+        .arg("--variables-file")
+        .arg(file_path_string)
+        .stdin("This text contains three values - ${KEY_1}, ${KEY_2}, ${KEY_3} - in its middle.\n")
+        .stdout("This text contains three values - value1, value2, value3 - in its middle.\n")
+        .run_test()
+}
+
+#[test]
+fn var_file_with_dollar_unescaped() -> Result<(), Box<dyn std::error::Error>> {
+    let file = NamedTempFile::new()?;
+    write_to_file(file.path(), "KEY=value$1\n");
+    let file_path_string = file.path().as_os_str().to_str().ok_or("Non UTF-8 string")?;
+
+    Tester::new(CMD)
+        .arg("--variables-file")
+        .arg(file_path_string)
+        .stdin("This text contains a ${KEY} in its middle.\n")
+        .stdout("This text contains a value in its middle.\n")
+        .run_test()
+}
+
+#[test]
+fn var_file_with_dollar_escaped() -> Result<(), Box<dyn std::error::Error>> {
+    let file = NamedTempFile::new()?;
+    write_to_file(file.path(), "KEY=value\\$1\n");
+    let file_path_string = file.path().as_os_str().to_str().ok_or("Non UTF-8 string")?;
+
+    Tester::new(CMD)
+        .arg("--variables-file")
+        .arg(file_path_string)
+        .stdin("This text contains a ${KEY} in its middle.\n")
+        .stdout("This text contains a value$1 in its middle.\n")
+        .run_test()
+}
+
+#[test]
 fn file_does_exist_long() -> Result<(), Box<dyn std::error::Error>> {
     let file = NamedTempFile::new()?;
     write_to_file(file.path(), "This text contains a ${KEY} in its middle.\n");
