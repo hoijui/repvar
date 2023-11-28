@@ -1,6 +1,6 @@
 // SPDX-FileCopyrightText: 2021-2022 Robin Vobruba <hoijui.quaero@gmail.com>
 //
-// SPDX-License-Identifier: GPL-3.0-or-later
+// SPDX-License-Identifier: AGPL-3.0-or-later
 
 use clap::{command, Arg, ArgAction, Command, ValueHint};
 use const_format::formatcp;

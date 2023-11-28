@@ -1,6 +1,6 @@
 // SPDX-FileCopyrightText: 2021 Robin Vobruba <hoijui.quaero@gmail.com>
 //
-// SPDX-License-Identifier: GPL-3.0-or-later
+// SPDX-License-Identifier: AGPL-3.0-or-later
 
 use assert_cmd::Command; // Add methods on commands
 use predicates::prelude::*; // Used for writing assertions
