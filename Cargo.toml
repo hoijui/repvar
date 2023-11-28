@@ -10,7 +10,7 @@ authors = ["Robin Vobruba <hoijui.quaero@gmail.com>"]
 description = """
     A tiny CLI tool that replaces variables of the style `${KEY}`
     in text with their respective value.
-    It can also be used as a rust library
+    It can also be used as a rust library.
     """
 repository = "https://github.com/hoijui/repvar"
 homepage = "https://github.com/hoijui/repvar"
