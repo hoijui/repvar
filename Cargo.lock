@@ -137,11 +137,11 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "702fc72eb24e5a1e48ce58027a675bc24edd52096d5397d4aea7c6dd9eca0bd1"
 
 [[package]]
-name = "cli-utils"
-version = "0.5.0"
-source = "git+https://github.com/hoijui/cli-utils-rs.git#daaaaa32968c1f1060972f3afd02d948171828c7"
+name = "cli_utils_hoijui"
+version = "0.6.2"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "62690b275a696adef1ea56791a4bf812b606c4c2f14d876303c33729e1c73bbf"
 dependencies = [
- "git-version",
  "once_cell",
 ]
 
@@ -402,7 +402,7 @@ version = "0.12.0"
 dependencies = [
  "assert_cmd",
  "clap",
- "cli-utils",
+ "cli_utils_hoijui",
  "const_format",
  "dotenvy",
  "env_logger",

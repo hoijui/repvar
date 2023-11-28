@@ -42,7 +42,7 @@ print_stderr = "warn"
 
 [dependencies]
 clap = { version = "4.0", features = ["cargo"] }
-cli-utils = { version = "0.5", git = "https://github.com/hoijui/cli-utils-rs.git" }
+cli_utils = { version = "0.6", package = "cli_utils_hoijui" }
 const_format = "0.2"
 dotenvy = "0.15"
 env_logger = { version = "0.10", default-features = false }
