@@ -12,16 +12,16 @@ SPDX-License-Identifier: CC0-1.0
 [![REUSE status](
     https://api.reuse.software/badge/github.com/hoijui/repvar)](
     https://api.reuse.software/info/github.com/hoijui/repvar)
-[![crates.io](
+[![Package Releases](
     https://img.shields.io/crates/v/repvar.svg)](
     https://crates.io/crates/repvar)
-[![Docs](
+[![Documentation Releases](
     https://docs.rs/repvar/badge.svg)](
     https://docs.rs/repvar)
-[![dependency status](
+[![Dependency Status](
     https://deps.rs/repo/github/hoijui/repvar/status.svg)](
     https://deps.rs/repo/github/hoijui/repvar)
-[![Build status](
+[![Build Status](
     https://github.com/hoijui/repvar/workflows/build/badge.svg)](
     https://github.com/hoijui/repvar/actions)
 
