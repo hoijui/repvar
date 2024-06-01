@@ -44,7 +44,7 @@ clap = { version = "4.4", features = ["cargo"] }
 cli_utils = { version = "0.7", package = "cli_utils_hoijui" }
 const_format = "0.2"
 dotenvy = "0.15"
-env_logger = { version = "0.10", default-features = false }
+env_logger = { version = "0.11", default-features = false }
 git-version = "0.3"
 lazy_static = "1.4"
 log = "0.4"
