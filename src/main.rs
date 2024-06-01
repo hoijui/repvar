@@ -14,8 +14,6 @@ use std::collections::HashMap;
 
 #[allow(clippy::print_stdout)]
 fn print_version_and_exit(quiet: bool) {
-    #![allow(clippy::print_stdout)]
-
     if !quiet {
         print!("{} ", clap::crate_name!());
     }
