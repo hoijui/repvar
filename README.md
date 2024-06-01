@@ -95,6 +95,12 @@ To run unit-, doc- and integration-tests:
 scripts/test
 ```
 
+## Similar projects
+
+- More powerful string templating engine,
+  but very much in line with the unix philosophy as well
+  <https://github.com/nilsmartel/string>
+
 ## Funding
 
 This project was funded by the European Regional Development Fund (ERDF)
