@@ -41,7 +41,7 @@ print_stderr = "warn"
 
 [dependencies]
 clap = { version = "4.4", features = ["cargo"] }
-cli_utils = { version = "0.7", package = "cli_utils_hoijui" }
+cli_utils = { version = "0.9", package = "cli_utils_hoijui" }
 const_format = "0.2"
 dotenvy = "0.15"
 env_logger = { version = "0.11", default-features = false }
@@ -49,8 +49,8 @@ git-version = "0.3"
 lazy_static = "1.4"
 log = "0.4"
 regex = "1.10"
-thiserror = "1.0"
-typed-builder = "0.18"
+thiserror = "2.0"
+typed-builder = "0.20"
 
 [dev-dependencies]
 assert_cmd = "2.0"
