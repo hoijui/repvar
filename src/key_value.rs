@@ -1,4 +1,4 @@
-// SPDX-FileCopyrightText: 2022 Robin Vobruba <hoijui.quaero@gmail.com>
+// SPDX-FileCopyrightText: 2022-2024 Robin Vobruba <hoijui.quaero@gmail.com>
 //
 // SPDX-License-Identifier: AGPL-3.0-or-later
 
@@ -50,7 +50,7 @@ pub struct Pair<'t> {
     pub value: &'t str,
 }
 
-impl<'t> fmt::Display for Pair<'t> {
+impl fmt::Display for Pair<'_> {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
         write!(f, "'{}'='{}'", self.key, self.value)
     }
@@ -70,6 +70,10 @@ impl<'t> Pair<'t> {
         Ok(Pair { key, value })
     }
 
+    /// Converts a `Pair` into a `PairBuf`.
+    ///
+    /// This makes sense if you need to store the parsed key-value
+    /// pair in a data-structure that requires owned strings.
     #[must_use]
     pub fn to_pair_buf(&self) -> PairBuf {
         PairBuf {
@@ -80,6 +84,7 @@ impl<'t> Pair<'t> {
 }
 
 /// Parses a file containing lines of the form `KEY=VALUE`.
+///
 /// Empty lines and those starting with either "#" or "//" are ignored.
 /// Values may be quoted: `KEY="VALUE"` or `KEY='VALUE'`.
 /// Multi-line values are possible too; they require quotes:

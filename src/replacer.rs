@@ -1,4 +1,4 @@
-// SPDX-FileCopyrightText: 2021 Robin Vobruba <hoijui.quaero@gmail.com>
+// SPDX-FileCopyrightText: 2021-2024 Robin Vobruba <hoijui.quaero@gmail.com>
 //
 // SPDX-License-Identifier: AGPL-3.0-or-later
 
@@ -13,7 +13,7 @@ fn replacement<S: ::std::hash::BuildHasher>(
     key: &str,
     settings: &Settings<S>,
 ) -> io::Result<(bool, String)> {
-    return settings.vars.get(key).map_or_else(
+    settings.vars.get(key).map_or_else(
         || {
             if settings.fail_on_missing {
                 Err(io::Error::new(
@@ -25,7 +25,7 @@ fn replacement<S: ::std::hash::BuildHasher>(
             }
         },
         |val| Ok((true, val.to_string())),
-    );
+    )
 }
 
 enum ReplState {
