@@ -2,6 +2,3 @@
 #
 # SPDX-License-Identifier: Unlicense
 
-[submodule "run/rp"]
-	path = run/rp
-	url = https://github.com/hoijui/rust-project-scripts.git
