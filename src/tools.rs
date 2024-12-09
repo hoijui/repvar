@@ -12,6 +12,7 @@ pub fn append_env<S: ::std::hash::BuildHasher>(vars: &mut HashMap<String, String
     }
 }
 
+#[cfg(feature = "flush_to_env")]
 #[allow(dead_code)] // This is an API function for lib.rs
 pub fn flush_to_env<'a>(vars: impl Iterator<Item = (&'a String, &'a String)>, overwrite: bool) {
     for (key, value) in vars {
@@ -21,6 +22,7 @@ pub fn flush_to_env<'a>(vars: impl Iterator<Item = (&'a String, &'a String)>, ov
     }
 }
 
+#[cfg(feature = "flush_to_env")]
 #[allow(dead_code)] // This is an API function for lib.rs
 pub fn flush_map_to_env<S: ::std::hash::BuildHasher>(
     vars: &HashMap<String, String, S>,

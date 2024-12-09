@@ -19,6 +19,10 @@ categories = ["command-line-utilities", "text-processing"]
 readme = "README.md"
 edition = "2021"
 
+[features]
+# This requires unsafe code
+flush_to_env = [] # feature has no explicit dependencies
+
 [lints.rust]
 rust_2021_compatibility = { level = "warn", priority = -1 }
 
