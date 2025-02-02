@@ -76,7 +76,7 @@ macro_rules! settings {
 #[allow(unused_imports)]
 pub use settings;
 
-/// Extracts all occurences of variables of the form `${KEY}` in a string
+/// Extracts all occurrences of variables of the form `${KEY}` in a string
 /// in the order and amount they appear in the input.
 ///
 /// ```rust
@@ -129,7 +129,7 @@ pub fn extract_from_string(input: &'_ str) -> Vec<&'_ str> {
     keys
 }
 
-/// Extracts all occurences of variables of the form `${KEY}` in a stream
+/// Extracts all occurrences of variables of the form `${KEY}` in a stream
 /// in the order and amount they appear in the input.
 ///
 /// # Errors
@@ -148,7 +148,7 @@ pub fn extract_from_stream(reader: &mut impl BufRead) -> io::Result<Vec<String>>
     Ok(keys)
 }
 
-/// Extracts all occurences of variables of the form `${KEY}` in a file
+/// Extracts all occurrences of variables of the form `${KEY}` in a file
 /// in the order and amount they appear in the input.
 ///
 /// # Errors
@@ -160,7 +160,7 @@ pub fn extract_from_file(source: Option<&str>) -> io::Result<Vec<String>> {
     extract_from_stream(&mut reader)
 }
 
-/// Replaces all occurences of variables of the form `${KEY}` in a string
+/// Replaces all occurrences of variables of the form `${KEY}` in a string
 /// with their respective values.
 ///
 /// ```rust
@@ -257,7 +257,7 @@ pub fn replace_in_string<'t, S: ::std::hash::BuildHasher>(
     }
 }
 
-/// Replaces all occurences of variables of the form `${KEY}` in a input stream
+/// Replaces all occurrences of variables of the form `${KEY}` in a input stream
 /// with their respective values.
 ///
 /// # Errors
@@ -287,7 +287,7 @@ pub fn replace_in_stream<S: ::std::hash::BuildHasher>(
     Ok(())
 }
 
-/// Replaces all occurences of variables of the form `${KEY}` in a input stream
+/// Replaces all occurrences of variables of the form `${KEY}` in a input stream
 /// with their respective values.
 ///
 /// # Errors
