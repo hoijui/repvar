@@ -1,16 +1,20 @@
-// SPDX-FileCopyrightText: 2021 - 2023 Robin Vobruba <hoijui.quaero@gmail.com>
+// SPDX-FileCopyrightText: 2021 - 2025 Robin Vobruba <hoijui.quaero@gmail.com>
 //
 // SPDX-License-Identifier: AGPL-3.0-or-later
 
 mod cli;
 
+use clap::crate_name;
+use cli_utils::BoxResult;
 use repvar::key_value;
 use repvar::replacer;
 use repvar::settings;
 use repvar::tools;
 
+use cli_utils::logging;
 use replacer::Settings;
 use std::collections::HashMap;
+use tracing_subscriber::filter::LevelFilter;
 
 #[allow(clippy::print_stdout)]
 fn print_version_and_exit(quiet: bool) {
@@ -21,7 +25,8 @@ fn print_version_and_exit(quiet: bool) {
     std::process::exit(0);
 }
 
-fn main() -> Result<(), Box<dyn std::error::Error>> {
+fn main() -> BoxResult<()> {
+    let log_reload_handle = logging::setup(crate_name!())?;
     let args = cli::args_matcher().get_matches();
 
     let quiet = args.get_flag(cli::A_L_QUIET);
@@ -32,11 +37,14 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
 
     let verbose = args.get_flag(cli::A_L_VERBOSE);
     let log_level = if verbose {
-        log::LevelFilter::Trace
+        LevelFilter::TRACE
+    } else if quiet {
+        LevelFilter::WARN
     } else {
-        log::LevelFilter::Info
+        LevelFilter::INFO
     };
-    env_logger::builder().filter_level(log_level).init();
+    logging::set_log_level_tracing(&log_reload_handle, log_level)?;
+
     let list = args.get_flag(cli::A_L_LIST);
     let src = args.get_one::<String>(cli::A_L_INPUT).cloned();
     let dst = args.get_one::<String>(cli::A_L_OUTPUT).cloned();

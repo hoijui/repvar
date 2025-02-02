@@ -274,9 +274,9 @@ pub fn replace_in_stream<S: ::std::hash::BuildHasher>(
     writer: &mut impl Write,
     settings: &Settings<S>,
 ) -> io::Result<()> {
-    if log::log_enabled!(log::Level::Debug) {
+    if tracing::enabled!(tracing::Level::DEBUG) {
         for (key, value) in &settings.vars {
-            log::debug!("VARIABLE: {key}={value}");
+            tracing::debug!("VARIABLE: {key}={value}");
         }
     }
 
@@ -304,12 +304,12 @@ pub fn replace_in_file<S: ::std::hash::BuildHasher>(
     destination: Option<&str>,
     settings: &Settings<S>,
 ) -> io::Result<()> {
-    if log::log_enabled!(log::Level::Debug) {
+    if tracing::enabled!(tracing::Level::DEBUG) {
         if let Some(in_file) = source {
-            log::debug!("INPUT: {}", &in_file);
+            tracing::debug!("INPUT: {}", &in_file);
         }
         if let Some(out_file) = destination {
-            log::debug!("OUTPUT: {}", &out_file);
+            tracing::debug!("OUTPUT: {}", &out_file);
         }
     }
 

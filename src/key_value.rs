@@ -2,6 +2,7 @@
 //
 // SPDX-License-Identifier: AGPL-3.0-or-later
 
+use cli_utils::BoxResult;
 use regex::Regex;
 use std::collections::HashMap;
 use std::fmt;
@@ -98,9 +99,7 @@ impl<'t> Pair<'t> {
 ///
 /// If any line has a bad form, missing key and/or value.
 /// See [``Pair::parse``] for more details.
-pub fn parse_vars_file_reader(
-    reader: impl BufRead,
-) -> Result<HashMap<String, String>, Box<dyn std::error::Error>> {
+pub fn parse_vars_file_reader(reader: impl BufRead) -> BoxResult<HashMap<String, String>> {
     lazy_static! {
         // Ignore empty lines and those starting with '#' or "//"
         static ref R_IGNORE_LINE: Regex = Regex::new(r"^($|#|//)").unwrap();
