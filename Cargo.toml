@@ -45,12 +45,11 @@ print_stderr = "warn"
 
 [dependencies]
 clap = { version = "4.5", features = ["cargo", "derive"] }
-cli_utils = { version = "0.9", features = ["logging"], package = "cli_utils_hoijui" }
+cli_utils = { version = "0.10", features = ["logging"], package = "cli_utils_hoijui" }
 const_format = "0.2"
 dotenvy = "0.15"
 env_logger = { version = "0.11", default-features = false }
 git-version = "0.3"
-lazy_static = "1.4"
 regex = "1.11"
 thiserror = "2.0"
 tracing = "0.1"
