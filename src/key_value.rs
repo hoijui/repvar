@@ -3,13 +3,10 @@
 // SPDX-License-Identifier: AGPL-3.0-or-later
 
 use cli_utils::BoxResult;
-use regex::Regex;
 use std::collections::HashMap;
 use std::fmt;
 use std::io::BufRead;
 use thiserror::Error;
-
-use lazy_static::lazy_static;
 
 #[derive(Error, Debug)]
 #[error("Failed to parse key-value pair; it has to be of the form 'key=value', but was '{input}'")]
@@ -100,10 +97,6 @@ impl<'t> Pair<'t> {
 /// If any line has a bad form, missing key and/or value.
 /// See [``Pair::parse``] for more details.
 pub fn parse_vars_file_reader(reader: impl BufRead) -> BoxResult<HashMap<String, String>> {
-    lazy_static! {
-        // Ignore empty lines and those starting with '#' or "//"
-        static ref R_IGNORE_LINE: Regex = Regex::new(r"^($|#|//)").unwrap();
-    }
     let iter = dotenvy::Iter::new(reader);
     let vars: Result<HashMap<_, _>, _> = iter.into_iter().collect();
     Ok(vars?)
