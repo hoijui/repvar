@@ -95,7 +95,7 @@ pub fn extract_from_string(input: &'_ str) -> Vec<&'_ str> {
     let mut state = ReplState::Text;
     let mut key_start = 0;
     let mut keys = vec![];
-    for (idx, chr) in input.chars().enumerate() {
+    for (idx, chr) in input.char_indices() {
         match state {
             ReplState::Text => {
                 if chr == '$' {
