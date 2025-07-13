@@ -84,7 +84,7 @@ repvars --help
 cargo build --release
 
 # To get a 64bit binary that is portabel to all Linux systems
-scripts/build
+run/rp/build
 ```
 
 ## Testing
@@ -92,7 +92,7 @@ scripts/build
 To run unit-, doc- and integration-tests:
 
 ```bash
-scripts/test
+run/rp/test
 ```
 
 ## Similar projects
