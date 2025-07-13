@@ -1,5 +1,5 @@
 <!--
-SPDX-FileCopyrightText: 2021 - 2023 Robin Vobruba <hoijui.quaero@gmail.com>
+SPDX-FileCopyrightText: 2021-2025 Robin Vobruba <hoijui.quaero@gmail.com>
 
 SPDX-License-Identifier: CC0-1.0
 -->
@@ -53,7 +53,7 @@ like `-Dkey=value`.
 
 ## Usage
 
-### Simplisitc
+### Simplistic
 
 ```bash
 $ export KEY_A="replacement"   # setting an env.-variable
@@ -67,14 +67,14 @@ Text replacement.              # output
 ```bash
 $ export first="the environment"
 $ echo 'Variables from ${first}, ${second}, ${not_supplied} and $${quoted}.' \
-    | repvars --env -D"second=the CLI"
+    | repvar --env -D"second=the CLI"
 Variables from the environment, the CLI, ${not_supplied} and ${quoted}.
 ```
 
 More usage info can be seen when running:
 
 ```bash
-repvars --help
+repvar --help
 ```
 
 ## Building
@@ -83,7 +83,7 @@ repvars --help
 # To get a binary for your system
 cargo build --release
 
-# To get a 64bit binary that is portabel to all Linux systems
+# To get a 64bit binary that is portable to all Linux systems
 run/rp/build
 ```
 
