@@ -59,10 +59,10 @@ pub fn flush_map_to_env<S: ::std::hash::BuildHasher>(
 /// ```
 #[must_use]
 pub fn get_start_quote(pot_quoted: &str) -> Option<char> {
-    if let Some(first) = pot_quoted.chars().next() {
-        if first == '"' || first == '\'' {
-            return Some(first);
-        }
+    if let Some(first) = pot_quoted.chars().next()
+        && (first == '"' || first == '\'')
+    {
+        return Some(first);
     }
     None
 }
@@ -89,10 +89,10 @@ pub fn get_start_quote(pot_quoted: &str) -> Option<char> {
 /// ```
 #[must_use]
 pub fn get_end_quote(pot_quoted: &str) -> Option<char> {
-    if let Some(last) = pot_quoted.chars().last() {
-        if last == '"' || last == '\'' {
-            return Some(last);
-        }
+    if let Some(last) = pot_quoted.chars().last()
+        && (last == '"' || last == '\'')
+    {
+        return Some(last);
     }
     None
 }
@@ -122,16 +122,13 @@ pub fn get_end_quote(pot_quoted: &str) -> Option<char> {
 #[must_use]
 pub fn unquote(pot_quoted: &str) -> &str {
     let len = pot_quoted.len();
-    if len > 1 {
-        if let (Some(start_q), Some(end_q)) =
+    if len > 1
+        && let (Some(start_q), Some(end_q)) =
             (get_start_quote(pot_quoted), get_end_quote(pot_quoted))
-        {
-            if start_q == end_q {
-                if let Some(unquoted) = pot_quoted.get(1..len - 1) {
-                    return unquoted;
-                }
-            }
-        }
+        && start_q == end_q
+        && let Some(unquoted) = pot_quoted.get(1..len - 1)
+    {
+        return unquoted;
     }
     pot_quoted
 }
