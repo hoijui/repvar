@@ -4,8 +4,8 @@
 
 mod cli_api;
 
-use cli_api::write_to_file;
 use cli_api::Tester;
+use cli_api::write_to_file;
 // Add methods on commands
 use tempfile::NamedTempFile;
 

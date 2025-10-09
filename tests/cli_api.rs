@@ -5,7 +5,7 @@
 use assert_cmd::Command; // Add methods on commands
 use predicates::prelude::*; // Used for writing assertions
 use std::{
-    collections::{hash_map::RandomState, HashMap},
+    collections::{HashMap, hash_map::RandomState},
     fs,
     path::Path,
 };

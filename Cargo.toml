@@ -17,7 +17,7 @@ homepage = "https://github.com/hoijui/repvar"
 keywords = ["cli", "utility", "variables", "replace"]
 categories = ["command-line-utilities", "text-processing"]
 readme = "README.md"
-edition = "2021"
+edition = "2024"
 
 [features]
 # This requires unsafe code
