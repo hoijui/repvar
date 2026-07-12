@@ -1,9 +1,10 @@
-// SPDX-FileCopyrightText: 2021-2024 Robin Vobruba <hoijui.quaero@gmail.com>
+// SPDX-FileCopyrightText: 2021-2026 Robin Vobruba <hoijui.quaero@gmail.com>
 //
 // SPDX-License-Identifier: AGPL-3.0-or-later
 
 #![allow(clippy::shadow_reuse)]
 
+use cli_utils::StreamIdent;
 use std::borrow::Cow;
 use std::collections::HashMap;
 use std::io::{self, BufRead, Write};
@@ -155,7 +156,8 @@ pub fn extract_from_stream(reader: &mut impl BufRead) -> io::Result<Vec<String>>
 ///
 /// If reading from the `source` failed.
 pub fn extract_from_file(source: Option<&str>) -> io::Result<Vec<String>> {
-    let mut reader = cli_utils::create_input_reader(source)?;
+    let reader_stream_ident = StreamIdent::from_path_opt(source, true);
+    let mut reader = reader_stream_ident.create_input_reader()?;
 
     extract_from_stream(&mut reader)
 }
@@ -313,8 +315,8 @@ pub fn replace_in_file<S: ::std::hash::BuildHasher>(
         }
     }
 
-    let mut reader = cli_utils::create_input_reader(source)?;
-    let mut writer = cli_utils::create_output_writer(destination)?;
+    let mut reader = StreamIdent::from_path_opt(source, true).create_input_reader()?;
+    let mut writer = StreamIdent::from_path_opt(destination, false).create_output_writer()?;
 
     replace_in_stream(&mut reader, &mut writer, settings)
 }

@@ -1,10 +1,12 @@
-// SPDX-FileCopyrightText: 2021 Robin Vobruba <hoijui.quaero@gmail.com>
+// SPDX-FileCopyrightText: 2021 - 2026 Robin Vobruba <hoijui.quaero@gmail.com>
 //
 // SPDX-License-Identifier: AGPL-3.0-or-later
 
 use std::collections::HashMap;
 use std::env;
 use std::io::{self, Write};
+
+use cli_utils::StreamIdent;
 
 pub fn append_env<S: ::std::hash::BuildHasher>(vars: &mut HashMap<String, String, S>) {
     for env_var in env::vars() {
@@ -139,7 +141,8 @@ pub fn unquote(pot_quoted: &str) -> &str {
 ///
 /// If writing to `destination` failed.
 pub fn write_to_file(lines: Vec<String>, destination: Option<&str>) -> io::Result<()> {
-    let mut writer = cli_utils::create_output_writer(destination)?;
+    let writer_stream_ident = StreamIdent::from_path_opt(destination, false);
+    let mut writer = writer_stream_ident.create_output_writer()?;
 
     for line in lines {
         writer.write_all(line.as_bytes())?;

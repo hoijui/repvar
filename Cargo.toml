@@ -1,4 +1,4 @@
-# SPDX-FileCopyrightText: 2021 - 2023 Robin Vobruba <hoijui.quaero@gmail.com>
+# SPDX-FileCopyrightText: 2021 - 2026 Robin Vobruba <hoijui.quaero@gmail.com>
 #
 # SPDX-License-Identifier: Unlicense
 
@@ -44,19 +44,19 @@ print_stdout = "warn"
 print_stderr = "warn"
 
 [dependencies]
-clap = { version = "4.5", features = ["cargo", "derive"] }
-cli_utils = { version = "0.10", features = ["logging"], package = "cli_utils_hoijui" }
+clap = { version = "4.6", features = ["cargo", "derive"] }
+cli_utils = { version = "0.13", features = ["logging"], package = "cli_utils_hoijui" }
 const_format = "0.2"
 dotenvy = "0.15"
 env_logger = { version = "0.11", default-features = false }
 git-version = "0.3"
-regex = "1.11"
+regex = "1.13"
 thiserror = "2.0"
 tracing = "0.1"
 tracing-subscriber = "0.3"
-typed-builder = "0.22"
+typed-builder = "0.23"
 
 [dev-dependencies]
-assert_cmd = "2.0"
-predicates = "3.0"
-tempfile = "3.23"
+assert_cmd = "2.2"
+predicates = "3.1"
+tempfile = "3.27"

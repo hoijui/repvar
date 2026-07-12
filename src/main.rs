@@ -6,6 +6,7 @@ mod cli;
 
 use clap::crate_name;
 use cli_utils::BoxResult;
+use cli_utils::StreamIdent;
 use repvar::key_value;
 use repvar::replacer;
 use repvar::settings;
@@ -62,7 +63,8 @@ fn main() -> BoxResult<()> {
         // enlist variables from files
         if let Some(var_files) = args.get_many::<String>(cli::A_L_VARIABLES_FILE) {
             for var_file in var_files {
-                let mut reader = cli_utils::create_input_reader(Some(var_file))?;
+                let mut reader =
+                    StreamIdent::from_path_opt(Some(var_file), true).create_input_reader()?;
                 vars.extend(key_value::parse_vars_file_reader(&mut reader)?);
             }
         }
