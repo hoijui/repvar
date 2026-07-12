@@ -24,7 +24,7 @@ fn replacement<S: ::std::hash::BuildHasher>(
                 Ok((false, format!("${{{key}}}")))
             }
         },
-        |val| Ok((true, val.to_string())),
+        |val| Ok((true, val.clone())),
     )
 }
 
