@@ -474,7 +474,6 @@ dependencies = [
  "env_logger",
  "git-version",
  "predicates",
- "regex",
  "tempfile",
  "thiserror",
  "tracing",
