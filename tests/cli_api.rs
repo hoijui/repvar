@@ -1,4 +1,4 @@
-// SPDX-FileCopyrightText: 2021-2024 Robin Vobruba <hoijui.quaero@gmail.com>
+// SPDX-FileCopyrightText: 2021-2026 Robin Vobruba <hoijui.quaero@gmail.com>
 //
 // SPDX-License-Identifier: AGPL-3.0-or-later
 
@@ -21,7 +21,8 @@ pub struct Tester<'a, S = RandomState> {
 }
 
 impl<'a> Tester<'a> {
-    pub fn new(cmd: &'a str) -> Tester<'a> {
+    #[must_use]
+    pub fn new(cmd: &'a str) -> Self {
         Tester {
             cmd,
             cwd: None,
@@ -34,40 +35,40 @@ impl<'a> Tester<'a> {
     }
 
     /// Set the working directory for the child process.
-    pub fn cwd(&'a mut self, dir: &'a str) -> &'a mut Tester<'a> {
+    pub fn cwd(&'a mut self, dir: &'a str) -> &'a mut Self {
         self.cwd = Some(dir);
         self
     }
 
-    pub fn stdin(&'a mut self, text: &'a str) -> &'a mut Tester<'a> {
+    pub fn stdin(&'a mut self, text: &'a str) -> &'a mut Self {
         self.stdin = Some(text);
         self
     }
 
     /// Add an argument to pass to the program.
-    pub fn env(&'a mut self, key: &'a str, value: &'a str) -> &'a mut Tester<'a> {
+    pub fn env(&'a mut self, key: &'a str, value: &'a str) -> &'a mut Self {
         self.env_vars.insert(key, value);
         self
     }
 
     /// Add an argument to pass to the program.
-    pub fn arg(&'a mut self, arg: &'a str) -> &'a mut Tester<'a> {
+    pub fn arg(&'a mut self, arg: &'a str) -> &'a mut Self {
         self.args.push(arg);
         self
     }
 
     /// Add multiple arguments to pass to the program.
-    pub fn args(&'a mut self, args: &[&'a str]) -> &'a mut Tester<'a> {
+    pub fn args(&'a mut self, args: &[&'a str]) -> &'a mut Self {
         self.args.extend_from_slice(args);
         self
     }
 
-    pub fn stdout(&'a mut self, text: &'a str) -> &'a mut Tester<'a> {
+    pub fn stdout(&'a mut self, text: &'a str) -> &'a mut Self {
         self.stdout = Some(text);
         self
     }
 
-    pub fn stderr(&'a mut self, text: &'a str) -> &'a mut Tester<'a> {
+    pub fn stderr(&'a mut self, text: &'a str) -> &'a mut Self {
         self.stderr = Some(text);
         self
     }
