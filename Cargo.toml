@@ -13,7 +13,6 @@ description = """
     It can also be used as a rust library.
     """
 repository = "https://github.com/hoijui/repvar"
-homepage = "https://github.com/hoijui/repvar"
 keywords = ["cli", "utility", "variables", "replace"]
 categories = ["command-line-utilities", "text-processing"]
 readme = "README.md"
